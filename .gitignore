@@ -1,0 +1,6 @@
+.backup/
+.vscode/
+env/
+.env
+__pycache__/
+*.pyc
