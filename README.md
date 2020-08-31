@@ -2,7 +2,7 @@
 
 ## Description
 A simple inline calendar, date selection tool for [aiogram](https://github.com/aiogram/aiogram) telegram bots written in Python. 
-Based on [calendar-telegram](https://github.com/unmonoqueteclea/calendar-telegram).
+Initially based on [calendar-telegram](https://github.com/unmonoqueteclea/calendar-telegram).
 The user can either select a date or move to the next or previous month by clicking a singe button.
 The file **aiogramcalendar.py** provides the user with two methods:
 * **create_calendar**: This method returns a InlineKeyboardMarkup object with the calendar in the provided year and month.
@@ -10,5 +10,8 @@ The file **aiogramcalendar.py** provides the user with two methods:
 
 ## Usage
 To use the aiogram_calendar you need to install [aiogram](https://github.com/aiogram/aiogram) first. Then add **aiogramcalendar.py** to your project.
+
+        from aiogramcalendar import calendar_callback, create_calendar, process_calendar_selection
+
 A full working example on how to use aiogram_calendar is provided in *bot_example.py*. 
 You create a calendar and add it to a message with a *reply_markup* parameter and then you can process it in a callbackqueyhandler method using the *process_calendar_selection* method.

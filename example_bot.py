@@ -1,7 +1,8 @@
 import logging
-from aiogram import Bot, Dispatcher, types
+from aiogram import Bot, Dispatcher
+from aiogram.types import Message, CallbackQuery, ReplyKeyboardRemove
 from aiogram.utils import executor
-from aiogramcalendar import create_calendar, process_calendar_selection
+from aiogramcalendar import calendar_callback, create_calendar, process_calendar_selection
 
 API_TOKEN = ''    # insert your telegram bot API key here
 
@@ -13,19 +14,17 @@ bot = Bot(token=API_TOKEN)
 dp = Dispatcher(bot)
 
 
-# starting bot when user sends `/start` command
+# starting bot when user sends `/start` command, answering with inline calendar
 @dp.message_handler(commands=['start'])
-async def cmd_start(message: types.Message):
+async def cmd_start(message: Message):
     await message.answer("Please select a date: ", reply_markup=create_calendar())
 
 
-@dp.callback_query_handler()
-async def process_name(callback_query):
-    selected,date = await process_calendar_selection(bot, callback_query)
+@dp.callback_query_handler(calendar_callback.filter())  # handler is processing only calendar_callback queries
+async def process_name(callback_query: CallbackQuery, callback_data: dict):
+    selected, date = await process_calendar_selection(callback_query, callback_data)
     if selected:
-        await bot.send_message(chat_id=callback_query.from_user.id,
-                        text="You selected %s" % (date.strftime("%d/%m/%Y")),
-                        reply_markup=types.ReplyKeyboardRemove())
+        await callback_query.message.answer(f'You selected {date.strftime("%d/%m/%Y")}', reply_markup=ReplyKeyboardRemove())
 
 
 if __name__ == '__main__':
