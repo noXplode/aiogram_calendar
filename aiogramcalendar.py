@@ -19,7 +19,7 @@ def create_calendar(year=datetime.now().year, month=datetime.now().month):
     # First row - Month and Year
     inline_kb.row()
     inline_kb.insert(InlineKeyboardButton("<", callback_data=calendar_callback.new("PREV-YEAR", year, month, 1)))
-    inline_kb.insert(InlineKeyboardButton(f'{calendar.month_name[month]} {str(year)}', callback_data=ignore_callback))
+    inline_kb.insert(InlineKeyboardButton(f'{str(year)}', callback_data=ignore_callback))
     inline_kb.insert(InlineKeyboardButton(">", callback_data=calendar_callback.new("NEXT-YEAR", year, month, 1)))
     # Second row - Week Days
     inline_kb.row()
@@ -39,7 +39,7 @@ def create_calendar(year=datetime.now().year, month=datetime.now().month):
     # Last row - Buttons
     inline_kb.row()
     inline_kb.insert(InlineKeyboardButton("<", callback_data=calendar_callback.new("PREV-MONTH", year, month, day)))
-    inline_kb.insert(InlineKeyboardButton(" ", callback_data=ignore_callback))
+    inline_kb.insert(InlineKeyboardButton(f"{calendar.month_name[month]}", callback_data=ignore_callback))
     inline_kb.insert(InlineKeyboardButton(">", callback_data=calendar_callback.new("NEXT-MONTH", year, month, day)))
 
     return inline_kb
