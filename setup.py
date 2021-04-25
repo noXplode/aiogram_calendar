@@ -1,13 +1,14 @@
 from distutils.core import setup
 setup(
-  name='Aiogram_calendar',
+  name='aiogram_calendar',
   packages=['aiogram_calendar'],
-  version='0.0.1',
+  version='0.0.2',
   license='MIT',
   description='Simple Inline Calendar & Date Selection tool for Aiogram Telegram bots',
   author='Andrew Nikolabay',
   author_email='',
   url='https://github.com/noXplode/aiogram_calendar',
+  download_url='https://github.com/noXplode/aiogram_calendar/archive/refs/tags/0.0.2.tar.gz',
   keywords=['Aiogram', 'Telegram', 'Bots', 'Calendar'],
   install_requires=[
           'aiogram',

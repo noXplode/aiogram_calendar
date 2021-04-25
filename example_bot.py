@@ -3,7 +3,7 @@ import logging
 from aiogram import Bot, Dispatcher
 from aiogram.types import Message, CallbackQuery, ReplyKeyboardRemove
 from aiogram.utils import executor
-from aiogramcalendar import calendar_callback, create_calendar, process_calendar_selection
+from aiogram_calendar import calendar_callback, create_calendar, process_calendar_selection
 
 API_TOKEN = ''    # insert your telegram bot API key here
 
