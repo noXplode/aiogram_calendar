@@ -5,3 +5,4 @@ env/
 .env
 __pycache__/
 *.pyc
+config.py

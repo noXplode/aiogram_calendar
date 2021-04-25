@@ -3,13 +3,14 @@ from datetime import datetime, timedelta
 
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.utils.callback_data import CallbackData
+from aiogram.types import CallbackQuery
 
 
 # setting callback_data prefix and parts
 calendar_callback = CallbackData('calendar', 'act', 'year', 'month', 'day')
 
 
-async def create_calendar(year=datetime.now().year, month=datetime.now().month):
+async def create_calendar(year: int = datetime.now().year, month: int = datetime.now().month) -> InlineKeyboardMarkup:
     """
     Creates an inline keyboard with the provided year and month
     :param int year: Year to use in the calendar, if None the current year is used.
@@ -62,7 +63,7 @@ async def create_calendar(year=datetime.now().year, month=datetime.now().month):
     return inline_kb
 
 
-async def process_calendar_selection(query, data):
+async def process_calendar_selection(query: CallbackQuery, data: CallbackData) -> tuple:
     """
     Process the callback_query. This method generates a new calendar if forward or
     backward is pressed. This method should be called inside a CallbackQueryHandler.
