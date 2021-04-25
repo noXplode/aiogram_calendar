@@ -1,1 +1,2 @@
-aiogram~=2.9
+aiogram~=2.12
+flake8
