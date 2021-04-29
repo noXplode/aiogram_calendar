@@ -3,7 +3,7 @@ import logging
 from aiogram import Bot, Dispatcher
 from aiogram.types import Message, CallbackQuery, ReplyKeyboardRemove
 from aiogram.utils import executor
-from aiogram_calendar import calendar_callback, SimpleCalendar
+from aiogram_calendar import calendar_callback, DialogCalendar
 
 from config import API_TOKEN
 
@@ -20,12 +20,12 @@ dp = Dispatcher(bot)
 # starting bot when user sends `/start` command, answering with inline calendar
 @dp.message_handler(commands=['start'])
 async def cmd_start(message: Message):
-    await message.answer("Please select a date: ", reply_markup=await SimpleCalendar().create_calendar())
+    await message.answer("Please select a date: ", reply_markup=await DialogCalendar().start_calendar())
 
 
 @dp.callback_query_handler(calendar_callback.filter())  # handler is processing only calendar_callback queries
 async def process_name(callback_query: CallbackQuery, callback_data: dict):
-    selected, date = await SimpleCalendar().process_calendar_selection(callback_query, callback_data)
+    selected, date = await DialogCalendar().process_selection(callback_query, callback_data)
     if selected:
         await callback_query.message.answer(
             f'You selected {date.strftime("%d/%m/%Y")}',
