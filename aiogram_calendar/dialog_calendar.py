@@ -12,6 +12,7 @@ ignore_callback = calendar_callback.new("IGNORE", -1, -1, -1)  # for buttons wit
 
 
 class DialogCalendar:
+    months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
     def __init__(self, year: int = datetime.now().year, month: int = datetime.now().month):
         self.year = year
@@ -44,23 +45,41 @@ class DialogCalendar:
 
     async def _get_month_kb(self, year: int):
         inline_kb = InlineKeyboardMarkup(row_width=6)
+        # first row with year button
         inline_kb.row()
-        months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
-        for month in months[0:6]:
+        inline_kb.insert(InlineKeyboardButton(" ", callback_data=ignore_callback))
+        inline_kb.insert(InlineKeyboardButton(
+            year,
+            callback_data=calendar_callback.new("START", year, -1, -1)
+        ))
+        inline_kb.insert(InlineKeyboardButton(" ", callback_data=ignore_callback))
+        # two rows with 6 months buttons
+        inline_kb.row()
+        for month in self.months[0:6]:
             inline_kb.insert(InlineKeyboardButton(
                 month,
-                callback_data=calendar_callback.new("SET-MONTH", year, months.index(month), -1)
+                callback_data=calendar_callback.new("SET-MONTH", year, self.months.index(month) + 1, -1)
             ))
         inline_kb.row()
-        for month in months[6:12]:
+        for month in self.months[6:12]:
             inline_kb.insert(InlineKeyboardButton(
                 month,
-                callback_data=calendar_callback.new("SET-MONTH", year, months.index(month), -1)
+                callback_data=calendar_callback.new("SET-MONTH", year, self.months.index(month) + 1, -1)
             ))
         return inline_kb
 
     async def _get_days_kb(self, year: int, month: int):
         inline_kb = InlineKeyboardMarkup(row_width=7)
+        inline_kb.row()
+        inline_kb.insert(InlineKeyboardButton(
+            year,
+            callback_data=calendar_callback.new("START", year, -1, -1)
+        ))
+        inline_kb.insert(InlineKeyboardButton(
+            self.months[month - 1],
+            callback_data=calendar_callback.new("SET-YEAR", year, -1, -1)
+        ))
+        inline_kb.row()
         for day in ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"]:
             inline_kb.insert(InlineKeyboardButton(day, callback_data=ignore_callback))
 
@@ -91,6 +110,9 @@ class DialogCalendar:
             print('next-years', data['year'])
             new_year = int(data['year']) + 5
             await query.message.edit_reply_markup(await self.start_calendar(new_year))
+        if data['act'] == "START":
+            print('start', data['year'])
+            await query.message.edit_reply_markup(await self.start_calendar(int(data['year'])))
         if data['act'] == "SET-MONTH":
             print('month', data['year'], data['month'])
             await query.message.edit_reply_markup(await self._get_days_kb(int(data['year']), int(data['month'])))
