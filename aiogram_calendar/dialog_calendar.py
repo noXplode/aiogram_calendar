@@ -7,7 +7,7 @@ from aiogram.types import CallbackQuery
 
 
 # setting callback_data prefix and parts
-calendar_callback = CallbackData('calendar', 'act', 'year', 'month', 'day')
+calendar_callback = CallbackData('dialog_calendar', 'act', 'year', 'month', 'day')
 ignore_callback = calendar_callback.new("IGNORE", -1, -1, -1)  # for buttons with no answer
 
 
@@ -89,10 +89,10 @@ class DialogCalendar:
             for day in week:
                 if(day == 0):
                     inline_kb.insert(InlineKeyboardButton(" ", callback_data=ignore_callback))
-                else:
-                    inline_kb.insert(InlineKeyboardButton(
-                        str(day), callback_data=calendar_callback.new("SET-DAY", year, month, day)
-                    ))
+                    continue
+                inline_kb.insert(InlineKeyboardButton(
+                    str(day), callback_data=calendar_callback.new("SET-DAY", year, month, day)
+                ))
         return inline_kb
 
     async def process_selection(self, query: CallbackQuery, data: CallbackData) -> tuple:
@@ -100,24 +100,18 @@ class DialogCalendar:
         if data['act'] == "IGNORE":
             await query.answer(cache_time=60)
         if data['act'] == "SET-YEAR":
-            print('year', data['year'])
             await query.message.edit_reply_markup(await self._get_month_kb(int(data['year'])))
         if data['act'] == "PREV-YEARS":
-            print('prev-years', data['year'])
             new_year = int(data['year']) - 5
             await query.message.edit_reply_markup(await self.start_calendar(new_year))
         if data['act'] == "NEXT-YEARS":
-            print('next-years', data['year'])
             new_year = int(data['year']) + 5
             await query.message.edit_reply_markup(await self.start_calendar(new_year))
         if data['act'] == "START":
-            print('start', data['year'])
             await query.message.edit_reply_markup(await self.start_calendar(int(data['year'])))
         if data['act'] == "SET-MONTH":
-            print('month', data['year'], data['month'])
             await query.message.edit_reply_markup(await self._get_days_kb(int(data['year']), int(data['month'])))
         if data['act'] == "SET-DAY":
-            print('day', data['year'], data['month'], data['day'])
             await query.message.delete_reply_markup()   # removing inline keyboard
             return_data = True, datetime(int(data['year']), int(data['month']), int(data['day']))
         return return_data
