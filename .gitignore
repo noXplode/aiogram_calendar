@@ -6,3 +6,7 @@ env/
 __pycache__/
 *.pyc
 config.py
+
+dist/
+MANIFEST
+MANIFEST.in
