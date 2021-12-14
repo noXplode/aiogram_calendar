@@ -1,14 +1,40 @@
 import calendar
 from datetime import datetime, timedelta
+import locale
+locale.setlocale(locale.LC_TIME, 'ru_RU.UTF-8')
 
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.utils.callback_data import CallbackData
 from aiogram.types import CallbackQuery
 
 
+search_cb = CallbackData('search', 'action')
 # setting callback_data prefix and parts
-calendar_callback = CallbackData('simple_calendar', 'act', 'year', 'month', 'day')
+calendar_callback = CallbackData('simple_calendar',
+                                 'act',
+                                 'year',
+                                 'month',
+                                 'day'
+                                 )
+_WEEK_DAYS = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"]
+# _WEEK_DAYS = ["Пн", "Вт", "Ср", "Чт", "Пт", "Сб", "Вс"]
+calendar.month_name = ['',
+                       'январь',
+                       'февраль',
+                       'март',
+                       'апрель',
+                       'май',
+                       'июнь',
+                       'июль',
+                       'август',
+                       'сентябрь',
+                       'октябрь',
+                       'ноябрь',
+                       'декабрь'
+                       ]
 
+
+CANCEL = InlineKeyboardButton(text='⛔️ отмена', callback_data=search_cb.new(action='cancel'))
 
 class SimpleCalendar:
 
@@ -41,7 +67,7 @@ class SimpleCalendar:
         ))
         # Second row - Week Days
         inline_kb.row()
-        for day in ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"]:
+        for day in _WEEK_DAYS:
             inline_kb.insert(InlineKeyboardButton(day, callback_data=ignore_callback))
 
         # Calendar rows - Days of month
@@ -52,6 +78,9 @@ class SimpleCalendar:
                 if(day == 0):
                     inline_kb.insert(InlineKeyboardButton(" ", callback_data=ignore_callback))
                     continue
+                now = datetime.now()
+                if day == now.day and month == now.month and year == now.year:
+                    day = f'• {day} •'
                 inline_kb.insert(InlineKeyboardButton(
                     str(day), callback_data=calendar_callback.new("DAY", year, month, day)
                 ))
@@ -61,10 +90,13 @@ class SimpleCalendar:
         inline_kb.insert(InlineKeyboardButton(
             "<", callback_data=calendar_callback.new("PREV-MONTH", year, month, day)
         ))
-        inline_kb.insert(InlineKeyboardButton(" ", callback_data=ignore_callback))
+        inline_kb.insert(InlineKeyboardButton(
+            "Today", callback_data=calendar_callback.new("CURR-MONTH", year, month, day)
+        ))
         inline_kb.insert(InlineKeyboardButton(
             ">", callback_data=calendar_callback.new("NEXT-MONTH", year, month, day)
         ))
+        inline_kb.add(CANCEL)
 
         return inline_kb
 
@@ -85,7 +117,8 @@ class SimpleCalendar:
         # user picked a day button, return date
         if data['act'] == "DAY":
             await query.message.delete_reply_markup()   # removing inline keyboard
-            return_data = True, datetime(int(data['year']), int(data['month']), int(data['day']))
+            day = data['day'].strip('•').strip()
+            return_data = True, datetime(int(data['year']), int(data['month']), int(day))
         # user navigates to previous year, editing message with new calendar
         if data['act'] == "PREV-YEAR":
             prev_date = temp_date - timedelta(days=365)
@@ -102,5 +135,9 @@ class SimpleCalendar:
         if data['act'] == "NEXT-MONTH":
             next_date = temp_date + timedelta(days=31)
             await query.message.edit_reply_markup(await self.start_calendar(int(next_date.year), int(next_date.month)))
+        if data['act'] == "CURR-MONTH":
+            next_date = datetime.now()
+            await query.message.edit_reply_markup(await self.start_calendar(int(next_date.year), int(next_date.month)))
+
         # at some point user clicks DAY button, returning date
         return return_data
