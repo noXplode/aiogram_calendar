@@ -1,4 +1,5 @@
 import calendar
+from contextlib import suppress
 from datetime import datetime, timedelta
 import locale
 locale.setlocale(locale.LC_TIME, 'ru_RU.UTF-8')
@@ -6,6 +7,7 @@ locale.setlocale(locale.LC_TIME, 'ru_RU.UTF-8')
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.utils.callback_data import CallbackData
 from aiogram.types import CallbackQuery
+from aiogram.utils.exceptions import MessageNotModified
 
 
 search_cb = CallbackData('search', 'action')
@@ -137,7 +139,14 @@ class SimpleCalendar:
             await query.message.edit_reply_markup(await self.start_calendar(int(next_date.year), int(next_date.month)))
         if data['act'] == "CURR-MONTH":
             next_date = datetime.now()
-            await query.message.edit_reply_markup(await self.start_calendar(int(next_date.year), int(next_date.month)))
+            with suppress(MessageNotModified):
+                await query.answer()
+                await query.message.edit_reply_markup(
+                        await self.start_calendar(
+                            int(next_date.year),
+                            int(next_date.month))
+                        )
+
 
         # at some point user clicks DAY button, returning date
         return return_data
