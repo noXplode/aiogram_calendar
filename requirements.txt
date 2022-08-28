@@ -1,3 +1,2 @@
 aiogram~=2.12
 aiogram_calendar
-flake8

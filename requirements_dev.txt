@@ -1,0 +1,6 @@
+aiogram~=2.12
+aiogram_calendar
+flake8
+pytest
+pytest-cov
+pytest-asyncio

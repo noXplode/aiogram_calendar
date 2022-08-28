@@ -87,7 +87,7 @@ class DialogCalendar:
         for week in month_calendar:
             inline_kb.row()
             for day in week:
-                if(day == 0):
+                if (day == 0):
                     inline_kb.insert(InlineKeyboardButton(" ", callback_data=ignore_callback))
                     continue
                 inline_kb.insert(InlineKeyboardButton(

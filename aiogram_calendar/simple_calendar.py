@@ -49,7 +49,7 @@ class SimpleCalendar:
         for week in month_calendar:
             inline_kb.row()
             for day in week:
-                if(day == 0):
+                if (day == 0):
                     inline_kb.insert(InlineKeyboardButton(" ", callback_data=ignore_callback))
                     continue
                 inline_kb.insert(InlineKeyboardButton(
@@ -88,11 +88,11 @@ class SimpleCalendar:
             return_data = True, datetime(int(data['year']), int(data['month']), int(data['day']))
         # user navigates to previous year, editing message with new calendar
         if data['act'] == "PREV-YEAR":
-            prev_date = temp_date - timedelta(days=365)
+            prev_date = datetime(int(data['year']) - 1, int(data['month']), 1)
             await query.message.edit_reply_markup(await self.start_calendar(int(prev_date.year), int(prev_date.month)))
         # user navigates to next year, editing message with new calendar
         if data['act'] == "NEXT-YEAR":
-            next_date = temp_date + timedelta(days=365)
+            next_date = datetime(int(data['year']) + 1, int(data['month']), 1)
             await query.message.edit_reply_markup(await self.start_calendar(int(next_date.year), int(next_date.month)))
         # user navigates to previous month, editing message with new calendar
         if data['act'] == "PREV-MONTH":
