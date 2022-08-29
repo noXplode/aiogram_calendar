@@ -14,14 +14,13 @@ ignore_callback = calendar_callback.new("IGNORE", -1, -1, -1)  # for buttons wit
 class DialogCalendar:
     months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
 
-    def __init__(self, year: int = datetime.now().year, month: int = datetime.now().month):
-        self.year = year
-        self.month = month
-
     async def start_calendar(
         self,
-        year: int = datetime.now().year
+        year: int = datetime.now().year,
+        month: int = None
     ) -> InlineKeyboardMarkup:
+        if month:
+            return await self._get_days_kb(year, month)
         inline_kb = InlineKeyboardMarkup(row_width=5)
         # first row - years
         inline_kb.row()
@@ -36,6 +35,9 @@ class DialogCalendar:
             '<<',
             callback_data=calendar_callback.new("PREV-YEARS", year, -1, -1)
         ))
+        inline_kb.insert(
+            InlineKeyboardButton("Cancel", callback_data=calendar_callback.new("CANCEL", year, 1, 1))
+        )
         inline_kb.insert(InlineKeyboardButton(
             '>>',
             callback_data=calendar_callback.new("NEXT-YEARS", year, -1, -1)
@@ -47,7 +49,9 @@ class DialogCalendar:
         inline_kb = InlineKeyboardMarkup(row_width=6)
         # first row with year button
         inline_kb.row()
-        inline_kb.insert(InlineKeyboardButton(" ", callback_data=ignore_callback))
+        inline_kb.insert(
+            InlineKeyboardButton("Cancel", callback_data=calendar_callback.new("CANCEL", year, 1, 1))
+        )
         inline_kb.insert(InlineKeyboardButton(
             year,
             callback_data=calendar_callback.new("START", year, -1, -1)
@@ -71,6 +75,9 @@ class DialogCalendar:
     async def _get_days_kb(self, year: int, month: int):
         inline_kb = InlineKeyboardMarkup(row_width=7)
         inline_kb.row()
+        inline_kb.insert(
+            InlineKeyboardButton("Cancel", callback_data=calendar_callback.new("CANCEL", year, 1, 1))
+        )
         inline_kb.insert(InlineKeyboardButton(
             year,
             callback_data=calendar_callback.new("START", year, -1, -1)
@@ -114,4 +121,6 @@ class DialogCalendar:
         if data['act'] == "SET-DAY":
             await query.message.delete_reply_markup()   # removing inline keyboard
             return_data = True, datetime(int(data['year']), int(data['month']), int(data['day']))
+        if data['act'] == "CANCEL":
+            await query.message.delete_reply_markup()
         return return_data

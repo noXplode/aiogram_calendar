@@ -61,7 +61,6 @@ class SimpleCalendar:
         inline_kb.insert(InlineKeyboardButton(
             "<", callback_data=calendar_callback.new("PREV-MONTH", year, month, day)
         ))
-        # inline_kb.insert(InlineKeyboardButton(" ", callback_data=ignore_callback))
         inline_kb.insert(
             InlineKeyboardButton("Cancel", callback_data=calendar_callback.new("CANCEL", year, month, day))
         )
