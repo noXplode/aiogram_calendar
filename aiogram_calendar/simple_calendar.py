@@ -56,17 +56,26 @@ class SimpleCalendar:
                     str(day), callback_data=calendar_callback.new("DAY", year, month, day)
                 ))
 
-        # Last row - Buttons
+        # Month nav Buttons & cancal button
         inline_kb.row()
         inline_kb.insert(InlineKeyboardButton(
             "<", callback_data=calendar_callback.new("PREV-MONTH", year, month, day)
         ))
-        inline_kb.insert(InlineKeyboardButton(" ", callback_data=ignore_callback))
+        # inline_kb.insert(InlineKeyboardButton(" ", callback_data=ignore_callback))
+        inline_kb.insert(
+            InlineKeyboardButton("Cancel", callback_data=calendar_callback.new("CANCEL", year, month, day))
+        )
+        inline_kb.insert(InlineKeyboardButton(
+            "Today", callback_data=calendar_callback.new("TODAY", year, month, day)
+        ))
         inline_kb.insert(InlineKeyboardButton(
             ">", callback_data=calendar_callback.new("NEXT-MONTH", year, month, day)
         ))
 
         return inline_kb
+
+    async def _update_calendar(self, query: CallbackQuery, with_date: datetime):
+        await query.message.edit_reply_markup(await self.start_calendar(int(with_date.year), int(with_date.month)))
 
     async def process_selection(self, query: CallbackQuery, data: CallbackData) -> tuple:
         """
@@ -89,18 +98,26 @@ class SimpleCalendar:
         # user navigates to previous year, editing message with new calendar
         if data['act'] == "PREV-YEAR":
             prev_date = datetime(int(data['year']) - 1, int(data['month']), 1)
-            await query.message.edit_reply_markup(await self.start_calendar(int(prev_date.year), int(prev_date.month)))
+            await self._update_calendar(query, prev_date)
         # user navigates to next year, editing message with new calendar
         if data['act'] == "NEXT-YEAR":
             next_date = datetime(int(data['year']) + 1, int(data['month']), 1)
-            await query.message.edit_reply_markup(await self.start_calendar(int(next_date.year), int(next_date.month)))
+            await self._update_calendar(query, next_date)
         # user navigates to previous month, editing message with new calendar
         if data['act'] == "PREV-MONTH":
             prev_date = temp_date - timedelta(days=1)
-            await query.message.edit_reply_markup(await self.start_calendar(int(prev_date.year), int(prev_date.month)))
+            await self._update_calendar(query, prev_date)
         # user navigates to next month, editing message with new calendar
         if data['act'] == "NEXT-MONTH":
             next_date = temp_date + timedelta(days=31)
-            await query.message.edit_reply_markup(await self.start_calendar(int(next_date.year), int(next_date.month)))
+            await self._update_calendar(query, next_date)
+        if data['act'] == "TODAY":
+            next_date = datetime.now()
+            if next_date.year != int(data['year']) or next_date.month != int(data['month']):
+                await self._update_calendar(query, datetime.now())
+            else:
+                await query.answer(cache_time=60)
+        if data['act'] == "CANCEL":
+            await query.message.delete_reply_markup()
         # at some point user clicks DAY button, returning date
         return return_data
