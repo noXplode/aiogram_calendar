@@ -18,7 +18,8 @@ bot = Bot(token=API_TOKEN)
 dp = Dispatcher(bot)
 
 start_kb = ReplyKeyboardMarkup(resize_keyboard=True,)
-start_kb.row('Navigation Calendar', 'Dialog Calendar')
+start_kb.row('Navigation Calendar', 'Navigation Calendar w month')
+start_kb.row('Dialog Calendar', 'Dialog Calendar w year', 'Dialog Calendar w month')
 
 
 # starting bot when user sends `/start` command, answering with inline calendar
@@ -30,6 +31,11 @@ async def cmd_start(message: Message):
 @dp.message_handler(Text(equals=['Navigation Calendar'], ignore_case=True))
 async def nav_cal_handler(message: Message):
     await message.answer("Please select a date: ", reply_markup=await SimpleCalendar().start_calendar())
+
+
+@dp.message_handler(Text(equals=['Navigation Calendar w month'], ignore_case=True))
+async def nav_cal_handler_date(message: Message):
+    await message.answer("Calendar opened on feb 1999. Please select a date: ", reply_markup=await SimpleCalendar().start_calendar(1999, 2))
 
 
 # simple calendar usage
@@ -44,8 +50,26 @@ async def process_simple_calendar(callback_query: CallbackQuery, callback_data: 
 
 
 @dp.message_handler(Text(equals=['Dialog Calendar'], ignore_case=True))
-async def simple_cal_handler(message: Message):
+async def dialog_cal_handler(message: Message):
     await message.answer("Please select a date: ", reply_markup=await DialogCalendar().start_calendar())
+
+
+# starting calendar with year 1989
+@dp.message_handler(Text(equals=['Dialog Calendar w year'], ignore_case=True))
+async def dialog_cal_handler_year(message: Message):
+    await message.answer(
+        "Calendar opened years selection around 1989. Please select a date: ",
+        reply_markup=await DialogCalendar().start_calendar(1989)
+    )
+
+
+# starting calendar with year 1989 & month
+@dp.message_handler(Text(equals=['Dialog Calendar w month'], ignore_case=True))
+async def dialog_cal_handler_month(message: Message):
+    await message.answer(
+        "Calendar opened on sep 1989. Please select a date: ",
+        reply_markup=await DialogCalendar().start_calendar(1989, 9)
+    )
 
 
 # dialog calendar usage
