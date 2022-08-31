@@ -10,8 +10,6 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 def test_init():
     dialog = DialogCalendar()
     assert dialog
-    assert dialog.year == datetime.now().year
-    assert dialog.month == datetime.now().month
 
 
 # checking that overall structure of returned object is correct
@@ -73,6 +71,7 @@ testset = [
     ({'@': 'dialog_calendar', 'act': 'SET-MONTH', 'year': '2022', 'month': '8', 'day': '1'}, (False, None)),
     ({'@': 'dialog_calendar', 'act': 'SET-YEAR', 'year': '2021', 'month': '8', 'day': '0'}, (False, None)),
     ({'@': 'dialog_calendar', 'act': 'START', 'year': '2021', 'month': '8', 'day': '0'}, (False, None)),
+    ({'@': 'dialog_calendar', 'act': 'CANCEL', 'year': '2021', 'month': '8', 'day': '0'}, (False, None)),
 ]
 
 

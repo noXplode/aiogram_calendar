@@ -52,7 +52,7 @@ async def test_start_calendar_params(year, month, expected):
     kb = result['inline_keyboard']
     assert kb[0][1]['text'] == expected
 
-
+now = datetime.now()
 testset = [
     ({'@': 'simple_calendar', 'act': 'IGNORE', 'year': '2022', 'month': '8', 'day': '0'}, (False, None)),
     ({'@': 'simple_calendar', 'act': 'DAY', 'year': '2022', 'month': '8', 'day': '1'}, (True, datetime(2022, 8, 1))),
@@ -62,6 +62,8 @@ testset = [
     ({'@': 'simple_calendar', 'act': 'PREV-MONTH', 'year': '2021', 'month': '8', 'day': '0'}, (False, None)),
     ({'@': 'simple_calendar', 'act': 'NEXT-YEAR', 'year': '2022', 'month': '8', 'day': '1'}, (False, None)),
     ({'@': 'simple_calendar', 'act': 'NEXT-MONTH', 'year': '2021', 'month': '8', 'day': '0'}, (False, None)),
+    ({'@': 'simple_calendar', 'act': 'CANCEL', 'year': '2021', 'month': '8', 'day': '0'}, (False, None)),
+    ({'@': 'simple_calendar', 'act': 'TODAY', 'year': '2021', 'month': '8', 'day': '1'}, (False, None)),
 ]
 
 
