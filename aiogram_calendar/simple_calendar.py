@@ -4,10 +4,11 @@ from datetime import datetime, timedelta
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.utils.callback_data import CallbackData
 from aiogram.types import CallbackQuery
+from .calendar_types import SimpleCalendarCallback, CalendarAction
 
 
 # setting callback_data prefix and parts
-calendar_callback = CallbackData('simple_calendar', 'act', 'year', 'month', 'day')
+# calendar_callback = CallbackData('simple_calendar', 'act', 'year', 'month', 'day')
 
 
 class SimpleCalendar:
