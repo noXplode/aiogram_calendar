@@ -33,11 +33,11 @@ class SimpleCalendar:
                     callback_data=SimpleCalendarCallback(
                         act=SimpleCalendarAction.PREV_YEAR,
                         year=year, month=month,
-                        day=1)
+                        day=1).pack()
                 ),
                 InlineKeyboardButton(
                     text=f'{calendar.month_name[month]} {str(year)}',
-                    callback_data=ignore_callback
+                    callback_data=ignore_callback.pack()
                 ),
                 InlineKeyboardButton(
                     text=">>",
@@ -45,14 +45,14 @@ class SimpleCalendar:
                         act=SimpleCalendarAction.NEXT_YEAR,
                         year=year,
                         month=month,
-                        day=1)
+                        day=1).pack()
                 )
             ]
         )
 
         # Second row - Week Days
         markup.append(
-            [InlineKeyboardButton(text=day, callback_data=ignore_callback) for day in WEEKDAYS]
+            [InlineKeyboardButton(text=day, callback_data=ignore_callback.pack()) for day in WEEKDAYS]
         )
 
         # Calendar rows - Days of month
@@ -61,11 +61,11 @@ class SimpleCalendar:
             calendar_row = []
             for day in week:
                 if day == 0:
-                    calendar_row.append(InlineKeyboardButton(text=" ", callback_data=ignore_callback))
+                    calendar_row.append(InlineKeyboardButton(text=" ", callback_data=ignore_callback.pack()))
                     continue
                 calendar_row.append(InlineKeyboardButton(
                     text=str(day),
-                    callback_data=SimpleCalendarCallback(act=SimpleCalendarAction.DAY, year=year, month=month, day=day)
+                    callback_data=SimpleCalendarCallback(act=SimpleCalendarAction.DAY, year=year, month=month, day=day).pack()
                 ))
             markup.append(calendar_row)
 
@@ -78,18 +78,18 @@ class SimpleCalendar:
                         act=SimpleCalendarAction.PREV_MONTH,
                         year=year,
                         month=month,
-                        day=day)
+                        day=day).pack()
                 ),
                 InlineKeyboardButton(
                     text=" ",
-                    callback_data=ignore_callback),
+                    callback_data=ignore_callback.pack()),
                 InlineKeyboardButton(
                     text=">",
                     callback_data=SimpleCalendarCallback(
                         act=SimpleCalendarAction.NEXT_MONTH,
                         year=year,
                         month=month,
-                        day=day)
+                        day=day).pack()
                 )
             ]
         )
@@ -107,6 +107,7 @@ class SimpleCalendar:
                     and returning the date if so.
         """
         return_data = (False, None)
+        data = SimpleCalendarCallback(**data)
         temp_date = datetime(int(data.year), int(data.month), 1)
         # processing empty buttons, answering with no action
         if data.act == SimpleCalendarAction.IGNORE:

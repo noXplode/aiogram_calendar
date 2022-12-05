@@ -5,6 +5,7 @@ from unittest.mock import AsyncMock
 import pytest
 
 from aiogram_calendar import SimpleCalendar
+from aiogram_calendar.calendar_types import SimpleCalendarAction
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 
@@ -18,9 +19,9 @@ async def test_start_calendar():
     result = await SimpleCalendar().start_calendar()
 
     assert type(result) == InlineKeyboardMarkup
-    assert result.row_width == 7
-    assert 'inline_keyboard' in result
-    kb = result['inline_keyboard']
+    # assert result.row_width == 7
+    assert hasattr(result, 'inline_keyboard')
+    kb = result.inline_keyboard
     assert type(kb) == list
 
     for i in range(0, len(kb)):
@@ -28,8 +29,8 @@ async def test_start_calendar():
 
     assert type(kb[0][1]) == InlineKeyboardButton
     now = datetime.now()
-    assert kb[0][1]['text'] == f'{calendar.month_name[now.month]} {str(now.year)}'
-    assert type(kb[0][1]['callback_data']) == str
+    assert kb[0][1].text == f'{calendar.month_name[now.month]} {str(now.year)}'
+    assert type(kb[0][1].callback_data) == str
 
 
 # checking if we can pass different years & months as start periods
@@ -49,19 +50,19 @@ async def test_start_calendar_params(year, month, expected):
         result = await SimpleCalendar().start_calendar(year=year)
     elif month:
         result = await SimpleCalendar().start_calendar(month=month)
-    kb = result['inline_keyboard']
-    assert kb[0][1]['text'] == expected
+    kb = result.inline_keyboard
+    assert kb[0][1].text == expected
 
 
 testset = [
-    ({'@': 'simple_calendar', 'act': 'IGNORE', 'year': '2022', 'month': '8', 'day': '0'}, (False, None)),
-    ({'@': 'simple_calendar', 'act': 'DAY', 'year': '2022', 'month': '8', 'day': '1'}, (True, datetime(2022, 8, 1))),
-    ({'@': 'simple_calendar', 'act': 'DAY', 'year': '2021', 'month': '7', 'day': '16'}, (True, datetime(2021, 7, 16))),
-    ({'@': 'simple_calendar', 'act': 'DAY', 'year': '1900', 'month': '10', 'day': '8'}, (True, datetime(1900, 10, 8))),
-    ({'@': 'simple_calendar', 'act': 'PREV-YEAR', 'year': '2022', 'month': '8', 'day': '1'}, (False, None)),
-    ({'@': 'simple_calendar', 'act': 'PREV-MONTH', 'year': '2021', 'month': '8', 'day': '0'}, (False, None)),
-    ({'@': 'simple_calendar', 'act': 'NEXT-YEAR', 'year': '2022', 'month': '8', 'day': '1'}, (False, None)),
-    ({'@': 'simple_calendar', 'act': 'NEXT-MONTH', 'year': '2021', 'month': '8', 'day': '0'}, (False, None)),
+    ({'@': 'simple_calendar', 'act': SimpleCalendarAction.IGNORE, 'year': '2022', 'month': '8', 'day': '0'}, (False, None)),
+    ({'@': 'simple_calendar', 'act': SimpleCalendarAction.DAY, 'year': '2022', 'month': '8', 'day': '1'}, (True, datetime(2022, 8, 1))),
+    ({'@': 'simple_calendar', 'act': SimpleCalendarAction.DAY, 'year': '2021', 'month': '7', 'day': '16'}, (True, datetime(2021, 7, 16))),
+    ({'@': 'simple_calendar', 'act': SimpleCalendarAction.DAY, 'year': '1900', 'month': '10', 'day': '8'}, (True, datetime(1900, 10, 8))),
+    ({'@': 'simple_calendar', 'act': SimpleCalendarAction.PREV_YEAR, 'year': '2022', 'month': '8', 'day': '1'}, (False, None)),
+    ({'@': 'simple_calendar', 'act': SimpleCalendarAction.PREV_MONTH, 'year': '2021', 'month': '8', 'day': '0'}, (False, None)),
+    ({'@': 'simple_calendar', 'act': SimpleCalendarAction.NEXT_YEAR, 'year': '2022', 'month': '8', 'day': '1'}, (False, None)),
+    ({'@': 'simple_calendar', 'act': SimpleCalendarAction.NEXT_MONTH, 'year': '2021', 'month': '8', 'day': '0'}, (False, None)),
 ]
 
 
