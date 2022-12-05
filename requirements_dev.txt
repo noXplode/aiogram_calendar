@@ -1,4 +1,4 @@
-aiogram>=3.0.0a12
+aiogram~=3.0.0b6
 flake8
 pytest
 pytest-cov
