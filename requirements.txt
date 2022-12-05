@@ -1,2 +1,2 @@
 aiogram~=3.0.0b6
-aiogram_calendar
+aiogram3_calendar
