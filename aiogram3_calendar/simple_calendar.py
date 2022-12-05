@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.filters.callback_data import CallbackData
 from aiogram.types import CallbackQuery
-from .calendar_types import SimpleCalendarCallback, SimpleCalendarAction, WEEKDAYS
+from aiogram3_calendar.calendar_types import SimpleCalendarCallback, SimpleCalendarAction, WEEKDAYS
 
 
 class SimpleCalendar:
@@ -107,7 +107,6 @@ class SimpleCalendar:
                     and returning the date if so.
         """
         return_data = (False, None)
-        data = SimpleCalendarCallback(**data)
         temp_date = datetime(int(data.year), int(data.month), 1)
         # processing empty buttons, answering with no action
         if data.act == SimpleCalendarAction.IGNORE:

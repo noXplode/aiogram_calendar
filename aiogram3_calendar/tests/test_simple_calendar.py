@@ -4,8 +4,8 @@ from unittest.mock import AsyncMock
 
 import pytest
 
-from aiogram_calendar import SimpleCalendar
-from aiogram_calendar.calendar_types import SimpleCalendarAction
+from aiogram3_calendar import SimpleCalendar
+from aiogram3_calendar.calendar_types import SimpleCalendarAction, SimpleCalendarCallback
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 
@@ -70,5 +70,5 @@ testset = [
 @pytest.mark.parametrize("callback_data, expected", testset)
 async def test_process_selection(callback_data, expected):
     query = AsyncMock()
-    result = await SimpleCalendar().process_selection(query=query, data=callback_data)
+    result = await SimpleCalendar().process_selection(query=query, data=SimpleCalendarCallback(**callback_data))
     assert result == expected
