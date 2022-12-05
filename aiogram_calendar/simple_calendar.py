@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.filters.callback_data import CallbackData
 from aiogram.types import CallbackQuery
-from .calendar_types import SimpleCalendarCallback, SimpleCalendarAction
+from .calendar_types import SimpleCalendarCallback, SimpleCalendarAction, WEEKDAYS
 
 
 class SimpleCalendar:
@@ -51,9 +51,8 @@ class SimpleCalendar:
         )
 
         # Second row - Week Days
-        week_days = ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"]
         markup.append(
-            [InlineKeyboardButton(text=day, callback_data=ignore_callback) for day in week_days]
+            [InlineKeyboardButton(text=day, callback_data=ignore_callback) for day in WEEKDAYS]
         )
 
         # Calendar rows - Days of month
