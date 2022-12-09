@@ -36,7 +36,7 @@ class DialogCalendarCallback(CallbackData, prefix='dialog_calendar'):
 
 
 class SimpleCalendarCallback(CallbackData, prefix='simple_calendar'):
-    act: DialogCalendarAction
+    act: SimpleCalendarAction
     year: int
     month: int
     day: int
