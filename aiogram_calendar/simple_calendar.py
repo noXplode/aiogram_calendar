@@ -32,7 +32,7 @@ class SimpleCalendar:
             callback_data=calendar_callback.new("PREV-YEAR", year, month, 1)
         ))
         inline_kb.insert(InlineKeyboardButton(
-            f'{calendar.month_name[month]} {str(year)}',
+            f'{str(year)}',
             callback_data=ignore_callback
         ))
         inline_kb.insert(InlineKeyboardButton(
@@ -61,7 +61,7 @@ class SimpleCalendar:
         inline_kb.insert(InlineKeyboardButton(
             "<", callback_data=calendar_callback.new("PREV-MONTH", year, month, day)
         ))
-        inline_kb.insert(InlineKeyboardButton(" ", callback_data=ignore_callback))
+        inline_kb.insert(InlineKeyboardButton(f"{calendar.month_name[month]}", callback_data=ignore_callback))
         inline_kb.insert(InlineKeyboardButton(
             ">", callback_data=calendar_callback.new("NEXT-MONTH", year, month, day)
         ))
