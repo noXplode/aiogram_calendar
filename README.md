@@ -1,4 +1,6 @@
-# Date Selection tool for Aiogram Telegram Bots
+# Date Selection tool for Aiogram 3 Telegram Bots
+
+### (updated by barabum!)
 
 ## Description
 A simple inline calendar, date selection tool for [aiogram](https://github.com/aiogram/aiogram) telegram bots written in Python.
