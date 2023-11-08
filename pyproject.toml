@@ -28,7 +28,10 @@ classifiers = [
     "Operating System :: OS Independent",
     "Programming Language :: Python :: Implementation :: CPython",
 ]
-dependencies = ['aiogram>=3.0.0b6']
+dependencies = [
+    "aiohttp==3.9.0b0; python_version=='3.12'",
+    "aiogram>=3.0.0b6"
+]
 dynamic = ["version"]
 
 [project.urls]
