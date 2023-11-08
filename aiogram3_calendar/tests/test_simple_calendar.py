@@ -1,12 +1,13 @@
+# pylint: disable=duplicate-code
 import calendar
 from datetime import datetime
 from unittest.mock import AsyncMock
 
 import pytest
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 from aiogram3_calendar import SimpleCalendar
 from aiogram3_calendar.calendar_types import SimpleCalendarAction, SimpleCalendarCallback
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 
 def test_init():
@@ -18,19 +19,19 @@ def test_init():
 async def test_start_calendar():
     result = await SimpleCalendar().start_calendar()
 
-    assert type(result) == InlineKeyboardMarkup
+    assert isinstance(result, InlineKeyboardMarkup)
     # assert result.row_width == 7
     assert hasattr(result, 'inline_keyboard')
     kb = result.inline_keyboard
-    assert type(kb) == list
+    assert isinstance(kb, list)
 
-    for i in range(0, len(kb)):
-        assert type(kb[i]) == list
+    for i in kb:
+        assert isinstance(i, list)
 
-    assert type(kb[0][1]) == InlineKeyboardButton
+    assert isinstance(kb[0][1], InlineKeyboardButton)
     now = datetime.now()
     assert kb[0][1].text == f'{calendar.month_name[now.month]} {str(now.year)}'
-    assert type(kb[0][1].callback_data) == str
+    assert isinstance(kb[0][1].callback_data, str)
 
 
 # checking if we can pass different years & months as start periods
@@ -44,6 +45,7 @@ testset = [
 @pytest.mark.asyncio
 @pytest.mark.parametrize("year, month, expected", testset)
 async def test_start_calendar_params(year, month, expected):
+    result = None
     if year and month:
         result = await SimpleCalendar().start_calendar(year=year, month=month)
     elif year:
@@ -55,14 +57,22 @@ async def test_start_calendar_params(year, month, expected):
 
 
 testset = [
-    ({'@': 'simple_calendar', 'act': SimpleCalendarAction.IGNORE, 'year': '2022', 'month': '8', 'day': '0'}, (False, None)),
-    ({'@': 'simple_calendar', 'act': SimpleCalendarAction.DAY, 'year': '2022', 'month': '8', 'day': '1'}, (True, datetime(2022, 8, 1))),
-    ({'@': 'simple_calendar', 'act': SimpleCalendarAction.DAY, 'year': '2021', 'month': '7', 'day': '16'}, (True, datetime(2021, 7, 16))),
-    ({'@': 'simple_calendar', 'act': SimpleCalendarAction.DAY, 'year': '1900', 'month': '10', 'day': '8'}, (True, datetime(1900, 10, 8))),
-    ({'@': 'simple_calendar', 'act': SimpleCalendarAction.PREV_YEAR, 'year': '2022', 'month': '8', 'day': '1'}, (False, None)),
-    ({'@': 'simple_calendar', 'act': SimpleCalendarAction.PREV_MONTH, 'year': '2021', 'month': '8', 'day': '0'}, (False, None)),
-    ({'@': 'simple_calendar', 'act': SimpleCalendarAction.NEXT_YEAR, 'year': '2022', 'month': '8', 'day': '1'}, (False, None)),
-    ({'@': 'simple_calendar', 'act': SimpleCalendarAction.NEXT_MONTH, 'year': '2021', 'month': '8', 'day': '0'}, (False, None)),
+    ({'@': 'simple_calendar', 'act': SimpleCalendarAction.IGNORE,
+      'year': '2022', 'month': '8', 'day': '0'}, (False, None)),
+    ({'@': 'simple_calendar', 'act': SimpleCalendarAction.DAY,
+      'year': '2022', 'month': '8', 'day': '1'}, (True, datetime(2022, 8, 1))),
+    ({'@': 'simple_calendar', 'act': SimpleCalendarAction.DAY,
+      'year': '2021', 'month': '7', 'day': '16'}, (True, datetime(2021, 7, 16))),
+    ({'@': 'simple_calendar', 'act': SimpleCalendarAction.DAY,
+      'year': '1900', 'month': '10', 'day': '8'}, (True, datetime(1900, 10, 8))),
+    ({'@': 'simple_calendar', 'act': SimpleCalendarAction.PREV_YEAR,
+      'year': '2022', 'month': '8', 'day': '1'}, (False, None)),
+    ({'@': 'simple_calendar', 'act': SimpleCalendarAction.PREV_MONTH,
+      'year': '2021', 'month': '8', 'day': '0'}, (False, None)),
+    ({'@': 'simple_calendar', 'act': SimpleCalendarAction.NEXT_YEAR,
+      'year': '2022', 'month': '8', 'day': '1'}, (False, None)),
+    ({'@': 'simple_calendar', 'act': SimpleCalendarAction.NEXT_MONTH,
+      'year': '2021', 'month': '8', 'day': '0'}, (False, None)),
 ]
 
 
@@ -70,5 +80,6 @@ testset = [
 @pytest.mark.parametrize("callback_data, expected", testset)
 async def test_process_selection(callback_data, expected):
     query = AsyncMock()
-    result = await SimpleCalendar().process_selection(query=query, data=SimpleCalendarCallback(**callback_data))
+    result = await SimpleCalendar().process_selection(
+        query=query, data=SimpleCalendarCallback(**callback_data))
     assert result == expected

@@ -1,3 +1,4 @@
+# pylint: disable=duplicate-code
 from typing import Union
 
 import calendar
@@ -22,10 +23,11 @@ class SimpleCalendar:
         :param int month: Month to use in the calendar, if None the current month is used.
         :return: Returns InlineKeyboardMarkup object with the calendar.
         """
-
+        day = None
         markup = []
-        ignore_callback = SimpleCalendarCallback(act=SimpleCalendarAction.IGNORE, year=year, month=month,
-                                                 day=0)  # for buttons with no answer
+        ignore_callback = SimpleCalendarCallback(
+            act=SimpleCalendarAction.IGNORE, year=year, month=month,
+            day=0)  # for buttons with no answer
 
         # First row - Month and Year
         markup.append(
@@ -54,7 +56,9 @@ class SimpleCalendar:
 
         # Second row - Week Days
         markup.append(
-            [InlineKeyboardButton(text=day, callback_data=ignore_callback.pack()) for day in WEEKDAYS]
+            [InlineKeyboardButton(
+                text=day, callback_data=ignore_callback.pack()
+            ) for day in WEEKDAYS]
         )
 
         # Calendar rows - Days of month
@@ -63,11 +67,13 @@ class SimpleCalendar:
             calendar_row = []
             for day in week:
                 if day == 0:
-                    calendar_row.append(InlineKeyboardButton(text=" ", callback_data=ignore_callback.pack()))
+                    calendar_row.append(
+                        InlineKeyboardButton(text=" ", callback_data=ignore_callback.pack()))
                     continue
                 calendar_row.append(InlineKeyboardButton(
                     text=str(day),
-                    callback_data=SimpleCalendarCallback(act=SimpleCalendarAction.DAY, year=year, month=month, day=day).pack()
+                    callback_data=SimpleCalendarCallback(
+                        act=SimpleCalendarAction.DAY, year=year, month=month, day=day).pack()
                 ))
             markup.append(calendar_row)
 
@@ -99,7 +105,8 @@ class SimpleCalendar:
         inline_kb = InlineKeyboardMarkup(inline_keyboard=markup, row_width=7)
         return inline_kb
 
-    async def process_selection(self, query: CallbackQuery, data: Union[CallbackData, SimpleCalendarCallback]) -> tuple:
+    async def process_selection(self, query: CallbackQuery,
+                                data: Union[CallbackData, SimpleCalendarCallback]) -> tuple:
         """
         Process the callback_query. This method generates a new calendar if forward or
         backward is pressed. This method should be called inside a CallbackQueryHandler.

@@ -1,0 +1,53 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aiogram3_calendar"
+
+authors = [
+    { name="o-murphy", email="thehelixpg@gmail.com" },
+    { name="Andrew Nikolabay" }
+]
+description = 'Simple Inline Calendar & Date Selection tool for Aiogram (version 3.0.0b6 and upper) Telegram bots'
+readme = "README.md"
+requires-python = ">=3.9"
+keywords = ['Aiogram', 'Aiogram3', 'Telegram', 'Bots', 'Calendar']
+license = {file = "LICENSE"}
+classifiers = [
+    "Intended Audience :: Developers",
+    "Natural Language :: English",
+    "Programming Language :: Python",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: Implementation :: CPython",
+]
+dependencies = ['aiogram>=3.0.0b6']
+dynamic = ["version"]
+
+[project.urls]
+"Homepage" = "https://github.com/o-murphy/aiogram3_calendar"
+"Bug Reports" = "https://github.com/o-murphy/aiogram3_calendar/issues"
+#"Funding" = "https://donate.pypi.org"
+#"Say Thanks!" = ""
+"Source" = "https://github.com/o-murphy/aiogram3_calendar"
+
+[tool.setuptools]
+py-modules = ["aiogram3_calendar"]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["aiogram3_calendar*"]
+
+[tool.setuptools.dynamic]
+version = {attr = "aiogram3_calendar.__version__"}
+
+[project.optional-dependencies]
+dev = ['flake8', 'pytest', 'pytest-cov', 'pytest-asyncio', 'pylint']

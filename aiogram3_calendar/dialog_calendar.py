@@ -1,3 +1,4 @@
+# pylint: disable=duplicate-code
 import calendar
 from datetime import datetime
 
@@ -24,7 +25,7 @@ class DialogCalendar:
         markup = [[  # first row - years
 
             InlineKeyboardButton(
-                text=value,
+                text=str(value),
                 callback_data=DialogCalendarCallback(
                     act=DialogCalendarAction.SET_YEAR,
                     year=value,
@@ -35,13 +36,15 @@ class DialogCalendar:
 
             InlineKeyboardButton(
                 text='<<',
-                callback_data=DialogCalendarCallback(act=DialogCalendarAction.PREV_YEARS, year=year, month=-1,
-                                                     day=-1).pack()
+                callback_data=DialogCalendarCallback(
+                    act=DialogCalendarAction.PREV_YEARS, year=year, month=-1,
+                    day=-1).pack()
             ),
             InlineKeyboardButton(
                 text='>>',
-                callback_data=DialogCalendarCallback(act=DialogCalendarAction.NEXT_YEARS, year=year, month=-1,
-                                                     day=-1).pack()
+                callback_data=DialogCalendarCallback(
+                    act=DialogCalendarAction.NEXT_YEARS, year=year, month=-1,
+                    day=-1).pack()
             ),
         ]]
 
@@ -54,22 +57,25 @@ class DialogCalendar:
 
             InlineKeyboardButton(text=" ", callback_data=ignore_callback.pack()),
             InlineKeyboardButton(
-                text=year,
-                callback_data=DialogCalendarCallback(act=DialogCalendarAction.START, year=year, month=-1, day=-1).pack()
+                text=str(year),
+                callback_data=DialogCalendarCallback(
+                    act=DialogCalendarAction.START, year=year, month=-1, day=-1).pack()
             ),
             InlineKeyboardButton(text=" ", callback_data=ignore_callback.pack()),
         ], [  # two rows with 6 months buttons
 
             InlineKeyboardButton(
                 text=month,
-                callback_data=DialogCalendarCallback(act=DialogCalendarAction.SET_MONTH, year=year,
-                                                     month=self.months.index(month) + 1, day=-1).pack()
+                callback_data=DialogCalendarCallback(
+                    act=DialogCalendarAction.SET_MONTH, year=year,
+                    month=self.months.index(month) + 1, day=-1).pack()
             ) for month in self.months[0:6]
         ], [
             InlineKeyboardButton(
                 text=month,
-                callback_data=DialogCalendarCallback(act=DialogCalendarAction.SET_MONTH, year=year,
-                                                     month=self.months.index(month) + 1, day=-1).pack()
+                callback_data=DialogCalendarCallback(
+                    act=DialogCalendarAction.SET_MONTH, year=year,
+                    month=self.months.index(month) + 1, day=-1).pack()
             ) for month in self.months[6:12]
         ]]
 
@@ -79,17 +85,21 @@ class DialogCalendar:
     async def _get_days_kb(self, year: int, month: int):
         markup = [[
             InlineKeyboardButton(
-                text=year,
-                callback_data=DialogCalendarCallback(act=DialogCalendarAction.START, year=year, month=-1, day=-1).pack()
+                text=str(year),
+                callback_data=DialogCalendarCallback(
+                    act=DialogCalendarAction.START, year=year, month=-1, day=-1).pack()
             ),
             InlineKeyboardButton(
                 text=self.months[month - 1],
-                callback_data=DialogCalendarCallback(act=DialogCalendarAction.SET_YEAR, year=year, month=-1,
-                                                     day=-1).pack()
+                callback_data=DialogCalendarCallback(
+                    act=DialogCalendarAction.SET_YEAR, year=year, month=-1,
+                    day=-1).pack()
             ),
 
         ], [
-            InlineKeyboardButton(text=day, callback_data=ignore_callback.pack()) for day in WEEKDAYS
+            InlineKeyboardButton(
+                text=day, callback_data=ignore_callback.pack()
+            ) for day in WEEKDAYS
         ]]
 
         month_calendar = calendar.monthcalendar(year, month)
@@ -97,19 +107,22 @@ class DialogCalendar:
             calendar_row = []
             for day in week:
                 if day == 0:
-                    calendar_row.append(InlineKeyboardButton(text=" ", callback_data=ignore_callback.pack()))
+                    calendar_row.append(
+                        InlineKeyboardButton(text=" ", callback_data=ignore_callback.pack()))
                     continue
                 calendar_row.append(InlineKeyboardButton(
                     text=str(day),
-                    callback_data=DialogCalendarCallback(act=DialogCalendarAction.SET_DAY, year=year, month=month,
-                                                         day=day).pack()
+                    callback_data=DialogCalendarCallback(
+                        act=DialogCalendarAction.SET_DAY, year=year, month=month,
+                        day=day).pack()
                 ))
             markup.append(calendar_row)
 
         inline_kb = InlineKeyboardMarkup(inline_keyboard=markup)
         return inline_kb
 
-    async def process_selection(self, query: CallbackQuery, data: [CallbackData, DialogCalendarCallback]) -> tuple:
+    async def process_selection(self, query: CallbackQuery,
+                                data: [CallbackData, DialogCalendarCallback]) -> tuple:
         return_data = (False, None)
         if data.act == DialogCalendarAction.IGNORE:
             await query.answer(cache_time=60)
