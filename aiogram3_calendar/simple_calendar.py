@@ -1,3 +1,5 @@
+from typing import Union
+
 import calendar
 from datetime import datetime, timedelta
 
@@ -97,7 +99,7 @@ class SimpleCalendar:
         inline_kb = InlineKeyboardMarkup(inline_keyboard=markup, row_width=7)
         return inline_kb
 
-    async def process_selection(self, query: CallbackQuery, data: [CallbackData, SimpleCalendarCallback]) -> tuple:
+    async def process_selection(self, query: CallbackQuery, data: Union[CallbackData, SimpleCalendarCallback]) -> tuple:
         """
         Process the callback_query. This method generates a new calendar if forward or
         backward is pressed. This method should be called inside a CallbackQueryHandler.
@@ -118,18 +120,38 @@ class SimpleCalendar:
         # user navigates to previous year, editing message with new calendar
         if data.act == SimpleCalendarAction.PREV_YEAR:
             prev_date = datetime(int(data.year) - 1, int(data.month), 1)
-            await query.message.edit_reply_markup(await self.start_calendar(int(prev_date.year), int(prev_date.month)))
+            await query.message.edit_reply_markup(
+                reply_markup=await self.start_calendar(
+                        int(prev_date.year),
+                        int(prev_date.month)
+                    )
+                )
         # user navigates to next year, editing message with new calendar
         if data.act == SimpleCalendarAction.NEXT_YEAR:
             next_date = datetime(int(data.year) + 1, int(data.month), 1)
-            await query.message.edit_reply_markup(await self.start_calendar(int(next_date.year), int(next_date.month)))
+            await query.message.edit_reply_markup(
+                reply_markup=await self.start_calendar(
+                        int(next_date.year),
+                        int(next_date.month)
+                    )
+                )
         # user navigates to previous month, editing message with new calendar
         if data.act == SimpleCalendarAction.PREV_MONTH:
             prev_date = temp_date - timedelta(days=1)
-            await query.message.edit_reply_markup(await self.start_calendar(int(prev_date.year), int(prev_date.month)))
+            await query.message.edit_reply_markup(
+                reply_markup=await self.start_calendar(
+                        int(prev_date.year),
+                        int(prev_date.month)
+                    )
+                )
         # user navigates to next month, editing message with new calendar
         if data.act == SimpleCalendarAction.NEXT_MONTH:
             next_date = temp_date + timedelta(days=31)
-            await query.message.edit_reply_markup(await self.start_calendar(int(next_date.year), int(next_date.month)))
+            await query.message.edit_reply_markup(
+                reply_markup=await self.start_calendar(
+                        int(next_date.year),
+                        int(next_date.month)
+                    )
+                )
         # at some point user clicks DAY button, returning date
         return return_data
