@@ -20,4 +20,4 @@ jobs:
         pip install aiogram pylint
     - name: Analysing the code with pylint
       run: |
-        pylint $(git ls-files '*.py')
+        pylint $(git ls-files './aiogram3_calendar/*.py')
