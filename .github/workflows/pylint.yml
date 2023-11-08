@@ -16,6 +16,9 @@ jobs:
         python-version: ${{ matrix.python-version }}
     - name: Install dependencies
       run: |
+        if [[ "${{ matrix.python-version }}" == "3.12" ]]; then
+          pip install aiohttp==3.9.0b0
+        fi
         python -m pip install --upgrade pip
         pip install aiogram pylint
     - name: Analysing the code with pylint
