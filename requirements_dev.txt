@@ -1,5 +1,0 @@
-aiogram~=3.0.0b6
-flake8
-pytest
-pytest-cov
-pytest-asyncio
