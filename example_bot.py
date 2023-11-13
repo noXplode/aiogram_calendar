@@ -5,8 +5,8 @@ import sys
 
 # from aiogram.types import Message, CallbackQuery
 # from aiogram.dispatcher.filters import Text
-# from aiogram_calendar import simple_cal_callback, SimpleCalendar, dialog_cal_callback, DialogCalendar
-from aiogram import Bot, Dispatcher     # , Router, types
+from aiogram_calendar import SimpleCalendar   # simple_cal_callback, dialog_cal_callback, DialogCalendar
+from aiogram import Bot, Dispatcher, F    # , Router, types
 from aiogram.enums import ParseMode
 from aiogram.filters import CommandStart
 from aiogram.types import Message, ReplyKeyboardMarkup, KeyboardButton
@@ -45,6 +45,11 @@ async def command_start_handler(message: Message) -> None:
     await message.reply(f"Hello, {hbold(message.from_user.full_name)}! Pick a calendar", reply_markup=start_kb)
 
 
+@dp.message(F.text.lower() == 'navigation calendar')
+async def nav_cal_handler(message: Message):
+    await message.answer("Please select a date: ", reply_markup=await SimpleCalendar().start_calendar())
+
+
 async def main() -> None:
     # Initialize Bot instance with a default parse mode which will be passed to all API calls
     bot = Bot(API_TOKEN, parse_mode=ParseMode.HTML)
@@ -58,9 +63,6 @@ if __name__ == "__main__":
     asyncio.run(main())
 
 
-# @dp.message_handler(Text(equals=['Navigation Calendar'], ignore_case=True))
-# async def nav_cal_handler(message: Message):
-#     await message.answer("Please select a date: ", reply_markup=await SimpleCalendar().start_calendar())
 
 
 # @dp.message_handler(Text(equals=['Navigation Calendar w month'], ignore_case=True))

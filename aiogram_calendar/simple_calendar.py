@@ -1,13 +1,17 @@
 import calendar
+from typing import Optional
 from datetime import datetime, timedelta
 
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-from aiogram.utils.callback_data import CallbackData
+from aiogram.filters.callback_data import CallbackData
 from aiogram.types import CallbackQuery
 
 
-# setting callback_data prefix and parts
-calendar_callback = CallbackData('simple_calendar', 'act', 'year', 'month', 'day')
+class SimpleCallback(CallbackData, prefix="simple_calendar"):
+    act: str
+    year: Optional[int] = None
+    month: Optional[int] = None
+    day: Optional[int] = None
 
 
 class SimpleCalendar:
@@ -23,55 +27,62 @@ class SimpleCalendar:
         :param int month: Month to use in the calendar, if None the current month is used.
         :return: Returns InlineKeyboardMarkup object with the calendar.
         """
-        inline_kb = InlineKeyboardMarkup(row_width=7)
-        ignore_callback = calendar_callback.new("IGNORE", year, month, 0)  # for buttons with no answer
-        # First row - Month and Year
-        inline_kb.row()
-        inline_kb.insert(InlineKeyboardButton(
-            "<<",
-            callback_data=calendar_callback.new("PREV-YEAR", year, month, 1)
+        # building a calendar keyboard
+        kb = []
+        ignore_callback = SimpleCallback(act="IGNORE").pack()  # placeholder for buttons with no answer
+
+        # inline_kb = InlineKeyboardMarkup(row_width=7)
+        # First row - Year
+        years_row = []
+        years_row.append(InlineKeyboardButton(
+            text="<<",
+            callback_data=SimpleCallback(act="PREV-YEAR", year=year, month=month, day=1).pack()
         ))
-        inline_kb.insert(InlineKeyboardButton(
-            f'{calendar.month_name[month]} {str(year)}',
+        years_row.append(InlineKeyboardButton(
+            text=f'{calendar.month_name[month]} {str(year)}',
             callback_data=ignore_callback
         ))
-        inline_kb.insert(InlineKeyboardButton(
-            ">>",
-            callback_data=calendar_callback.new("NEXT-YEAR", year, month, 1)
+        years_row.append(InlineKeyboardButton(
+            text=">>",
+            callback_data=SimpleCallback(act="NEXT-YEAR", year=year, month=month, day=1).pack()
         ))
+        kb.append(years_row)
+
         # Second row - Week Days
-        inline_kb.row()
+        week_days_labels_row = []
         for day in ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"]:
-            inline_kb.insert(InlineKeyboardButton(day, callback_data=ignore_callback))
+            week_days_labels_row.append(InlineKeyboardButton(text=day, callback_data=ignore_callback))
+        kb.append(week_days_labels_row)
 
         # Calendar rows - Days of month
         month_calendar = calendar.monthcalendar(year, month)
         for week in month_calendar:
-            inline_kb.row()
+            days_row = []
             for day in week:
                 if (day == 0):
-                    inline_kb.insert(InlineKeyboardButton(" ", callback_data=ignore_callback))
+                    days_row.append(InlineKeyboardButton(text=" ", callback_data=ignore_callback))
                     continue
-                inline_kb.insert(InlineKeyboardButton(
-                    str(day), callback_data=calendar_callback.new("DAY", year, month, day)
+                days_row.append(InlineKeyboardButton(
+                    text=str(day), callback_data=SimpleCallback(act="DAY", yesr=year, month=month, day=day).pack()
                 ))
+            kb.append(days_row)
 
-        # Month nav Buttons & cancal button
-        inline_kb.row()
-        inline_kb.insert(InlineKeyboardButton(
-            "<", callback_data=calendar_callback.new("PREV-MONTH", year, month, day)
+        # Month nav Buttons & cancel button
+        month_row = []
+        month_row.append(InlineKeyboardButton(
+            text="<", callback_data=SimpleCallback(act="PREV-MONTH", yesr=year, month=month, day=day).pack()
         ))
-        inline_kb.insert(
-            InlineKeyboardButton("Cancel", callback_data=calendar_callback.new("CANCEL", year, month, day))
-        )
-        inline_kb.insert(InlineKeyboardButton(
-            "Today", callback_data=calendar_callback.new("TODAY", year, month, day)
+        month_row.append(InlineKeyboardButton(
+            text="Cancel", callback_data=SimpleCallback(act="CANCEL", yesr=year, month=month, day=day).pack()
         ))
-        inline_kb.insert(InlineKeyboardButton(
-            ">", callback_data=calendar_callback.new("NEXT-MONTH", year, month, day)
+        month_row.append(InlineKeyboardButton(
+            text="Today", callback_data=SimpleCallback(act="TODAY", yesr=year, month=month, day=day).pack()
         ))
-
-        return inline_kb
+        month_row.append(InlineKeyboardButton(
+            text=">", callback_data=SimpleCallback(act="NEXT-MONTH", yesr=year, month=month, day=day).pack()
+        ))
+        kb.append(month_row)
+        return InlineKeyboardMarkup(row_width=7, inline_keyboard=kb)
 
     async def _update_calendar(self, query: CallbackQuery, with_date: datetime):
         await query.message.edit_reply_markup(await self.start_calendar(int(with_date.year), int(with_date.month)))
