@@ -63,31 +63,33 @@ class SimpleCalendar:
                     days_row.append(InlineKeyboardButton(text=" ", callback_data=ignore_callback))
                     continue
                 days_row.append(InlineKeyboardButton(
-                    text=str(day), callback_data=SimpleCallback(act="DAY", yesr=year, month=month, day=day).pack()
+                    text=str(day), callback_data=SimpleCallback(act="DAY", year=year, month=month, day=day).pack()
                 ))
             kb.append(days_row)
 
         # Month nav Buttons & cancel button
         month_row = []
         month_row.append(InlineKeyboardButton(
-            text="<", callback_data=SimpleCallback(act="PREV-MONTH", yesr=year, month=month, day=day).pack()
+            text="<", callback_data=SimpleCallback(act="PREV-MONTH", year=year, month=month, day=day).pack()
         ))
         month_row.append(InlineKeyboardButton(
-            text="Cancel", callback_data=SimpleCallback(act="CANCEL", yesr=year, month=month, day=day).pack()
+            text="Cancel", callback_data=SimpleCallback(act="CANCEL", year=year, month=month, day=day).pack()
         ))
         month_row.append(InlineKeyboardButton(
-            text="Today", callback_data=SimpleCallback(act="TODAY", yesr=year, month=month, day=day).pack()
+            text="Today", callback_data=SimpleCallback(act="TODAY", year=year, month=month, day=day).pack()
         ))
         month_row.append(InlineKeyboardButton(
-            text=">", callback_data=SimpleCallback(act="NEXT-MONTH", yesr=year, month=month, day=day).pack()
+            text=">", callback_data=SimpleCallback(act="NEXT-MONTH", year=year, month=month, day=day).pack()
         ))
         kb.append(month_row)
         return InlineKeyboardMarkup(row_width=7, inline_keyboard=kb)
 
     async def _update_calendar(self, query: CallbackQuery, with_date: datetime):
-        await query.message.edit_reply_markup(await self.start_calendar(int(with_date.year), int(with_date.month)))
+        await query.message.edit_reply_markup(
+            reply_markup=await self.start_calendar(int(with_date.year), int(with_date.month))
+        )
 
-    async def process_selection(self, query: CallbackQuery, data: CallbackData) -> tuple:
+    async def process_selection(self, query: CallbackQuery, data: SimpleCallback) -> tuple:
         """
         Process the callback_query. This method generates a new calendar if forward or
         backward is pressed. This method should be called inside a CallbackQueryHandler.
@@ -97,37 +99,41 @@ class SimpleCalendar:
                     and returning the date if so.
         """
         return_data = (False, None)
-        temp_date = datetime(int(data['year']), int(data['month']), 1)
+
         # processing empty buttons, answering with no action
-        if data['act'] == "IGNORE":
+        if data.act == "IGNORE":
             await query.answer(cache_time=60)
+            return return_data
+
+        temp_date = datetime(int(data.year), int(data.month), 1)
+
         # user picked a day button, return date
-        if data['act'] == "DAY":
+        if data.act == "DAY":
             await query.message.delete_reply_markup()   # removing inline keyboard
-            return_data = True, datetime(int(data['year']), int(data['month']), int(data['day']))
+            return_data = True, datetime(int(data.year), int(data.month), int(data.day))
         # user navigates to previous year, editing message with new calendar
-        if data['act'] == "PREV-YEAR":
-            prev_date = datetime(int(data['year']) - 1, int(data['month']), 1)
+        if data.act == "PREV-YEAR":
+            prev_date = datetime(int(data.year) - 1, int(data.month), 1)
             await self._update_calendar(query, prev_date)
         # user navigates to next year, editing message with new calendar
-        if data['act'] == "NEXT-YEAR":
-            next_date = datetime(int(data['year']) + 1, int(data['month']), 1)
+        if data.act == "NEXT-YEAR":
+            next_date = datetime(int(data.year) + 1, int(data.month), 1)
             await self._update_calendar(query, next_date)
         # user navigates to previous month, editing message with new calendar
-        if data['act'] == "PREV-MONTH":
+        if data.act == "PREV-MONTH":
             prev_date = temp_date - timedelta(days=1)
             await self._update_calendar(query, prev_date)
         # user navigates to next month, editing message with new calendar
-        if data['act'] == "NEXT-MONTH":
+        if data.act == "NEXT-MONTH":
             next_date = temp_date + timedelta(days=31)
             await self._update_calendar(query, next_date)
-        if data['act'] == "TODAY":
+        if data.act == "TODAY":
             next_date = datetime.now()
-            if next_date.year != int(data['year']) or next_date.month != int(data['month']):
+            if next_date.year != int(data.year) or next_date.month != int(data.month):
                 await self._update_calendar(query, datetime.now())
             else:
                 await query.answer(cache_time=60)
-        if data['act'] == "CANCEL":
+        if data.act == "CANCEL":
             await query.message.delete_reply_markup()
         # at some point user clicks DAY button, returning date
         return return_data

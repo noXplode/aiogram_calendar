@@ -2,14 +2,13 @@ import logging
 import asyncio
 import sys
 
-
-# from aiogram.types import Message, CallbackQuery
 # from aiogram.dispatcher.filters import Text
-from aiogram_calendar import SimpleCalendar   # simple_cal_callback, dialog_cal_callback, DialogCalendar
+from aiogram_calendar import SimpleCalendar, SimpleCallback   # simple_cal_callback, dialog_cal_callback, DialogCalendar
 from aiogram import Bot, Dispatcher, F    # , Router, types
 from aiogram.enums import ParseMode
 from aiogram.filters import CommandStart
-from aiogram.types import Message, ReplyKeyboardMarkup, KeyboardButton
+from aiogram.filters.callback_data import CallbackData
+from aiogram.types import Message, ReplyKeyboardMarkup, KeyboardButton, CallbackQuery
 from aiogram.utils.markdown import hbold
 
 from config import API_TOKEN
@@ -50,6 +49,24 @@ async def nav_cal_handler(message: Message):
     await message.answer("Please select a date: ", reply_markup=await SimpleCalendar().start_calendar())
 
 
+@dp.message(F.text.lower() == 'navigation calendar w month')
+async def nav_cal_handler_date(message: Message):
+    await message.answer(
+        "Calendar opened on feb 1999. Please select a date: ", reply_markup=await SimpleCalendar().start_calendar(1999, 2)
+    )
+
+
+# simple calendar usage
+@dp.callback_query(SimpleCallback.filter())
+async def process_simple_calendar(callback_query: CallbackQuery, callback_data: CallbackData):
+    selected, date = await SimpleCalendar().process_selection(callback_query, callback_data)
+    if selected:
+        await callback_query.message.answer(
+            f'You selected {date.strftime("%d/%m/%Y")}',
+            reply_markup=start_kb
+        )
+
+
 async def main() -> None:
     # Initialize Bot instance with a default parse mode which will be passed to all API calls
     bot = Bot(API_TOKEN, parse_mode=ParseMode.HTML)
@@ -62,23 +79,6 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO, stream=sys.stdout)
     asyncio.run(main())
 
-
-
-
-# @dp.message_handler(Text(equals=['Navigation Calendar w month'], ignore_case=True))
-# async def nav_cal_handler_date(message: Message):
-#     await message.answer("Calendar opened on feb 1999. Please select a date: ", reply_markup=await SimpleCalendar().start_calendar(1999, 2))
-
-
-# # simple calendar usage
-# @dp.callback_query_handler(simple_cal_callback.filter())
-# async def process_simple_calendar(callback_query: CallbackQuery, callback_data: dict):
-#     selected, date = await SimpleCalendar().process_selection(callback_query, callback_data)
-#     if selected:
-#         await callback_query.message.answer(
-#             f'You selected {date.strftime("%d/%m/%Y")}',
-#             reply_markup=start_kb
-#         )
 
 
 # @dp.message_handler(Text(equals=['Dialog Calendar'], ignore_case=True))
