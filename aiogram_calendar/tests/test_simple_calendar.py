@@ -5,6 +5,7 @@ from unittest.mock import AsyncMock
 import pytest
 
 from aiogram_calendar import SimpleCalendar
+from aiogram_calendar.schemas import SimpleCalendarCallback
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 
@@ -17,19 +18,19 @@ def test_init():
 async def test_start_calendar():
     result = await SimpleCalendar().start_calendar()
 
-    assert type(result) == InlineKeyboardMarkup
+    assert isinstance(result, InlineKeyboardMarkup)
     assert result.row_width == 7
-    assert 'inline_keyboard' in result
-    kb = result['inline_keyboard']
-    assert type(kb) == list
+    assert result.inline_keyboard
+    kb = result.inline_keyboard
+    assert isinstance(kb, list)
 
     for i in range(0, len(kb)):
-        assert type(kb[i]) == list
+        assert isinstance(kb[i], list)
 
-    assert type(kb[0][1]) == InlineKeyboardButton
+    assert isinstance(kb[0][1], InlineKeyboardButton)
     now = datetime.now()
-    assert kb[0][1]['text'] == f'{calendar.month_name[now.month]} {str(now.year)}'
-    assert type(kb[0][1]['callback_data']) == str
+    assert kb[0][1].text == f'{calendar.month_name[now.month]} {str(now.year)}'
+    assert isinstance(kb[0][1].callback_data, str)
 
 
 # checking if we can pass different years & months as start periods
@@ -49,21 +50,27 @@ async def test_start_calendar_params(year, month, expected):
         result = await SimpleCalendar().start_calendar(year=year)
     elif month:
         result = await SimpleCalendar().start_calendar(month=month)
-    kb = result['inline_keyboard']
-    assert kb[0][1]['text'] == expected
+    kb = result.inline_keyboard
+    assert kb[0][1].text == expected
 
 now = datetime.now()
 testset = [
-    ({'@': 'simple_calendar', 'act': 'IGNORE', 'year': '2022', 'month': '8', 'day': '0'}, (False, None)),
-    ({'@': 'simple_calendar', 'act': 'DAY', 'year': '2022', 'month': '8', 'day': '1'}, (True, datetime(2022, 8, 1))),
-    ({'@': 'simple_calendar', 'act': 'DAY', 'year': '2021', 'month': '7', 'day': '16'}, (True, datetime(2021, 7, 16))),
-    ({'@': 'simple_calendar', 'act': 'DAY', 'year': '1900', 'month': '10', 'day': '8'}, (True, datetime(1900, 10, 8))),
-    ({'@': 'simple_calendar', 'act': 'PREV-YEAR', 'year': '2022', 'month': '8', 'day': '1'}, (False, None)),
-    ({'@': 'simple_calendar', 'act': 'PREV-MONTH', 'year': '2021', 'month': '8', 'day': '0'}, (False, None)),
-    ({'@': 'simple_calendar', 'act': 'NEXT-YEAR', 'year': '2022', 'month': '8', 'day': '1'}, (False, None)),
-    ({'@': 'simple_calendar', 'act': 'NEXT-MONTH', 'year': '2021', 'month': '8', 'day': '0'}, (False, None)),
-    ({'@': 'simple_calendar', 'act': 'CANCEL', 'year': '2021', 'month': '8', 'day': '0'}, (False, None)),
-    ({'@': 'simple_calendar', 'act': 'TODAY', 'year': '2021', 'month': '8', 'day': '1'}, (False, None)),
+    (SimpleCalendarCallback(**{'act': 'IGNORE', 'year': 2022, 'month': 8, 'day': 0}), (False, None)),
+    (SimpleCalendarCallback(**{'act': 'DAY', 'year': '2022', 'month': '8', 'day': '1'}), (True, datetime(2022, 8, 1))),
+    (
+        SimpleCalendarCallback(**{'act': 'DAY', 'year': '2021', 'month': '7', 'day': '16'}),
+        (True, datetime(2021, 7, 16))
+    ),
+    (
+        SimpleCalendarCallback(**{'act': 'DAY', 'year': '1900', 'month': '10', 'day': '8'}),
+        (True, datetime(1900, 10, 8))
+    ),
+    (SimpleCalendarCallback(**{'act': 'PREV-YEAR', 'year': '2022', 'month': '8', 'day': '1'}), (False, None)),
+    (SimpleCalendarCallback(**{'act': 'PREV-MONTH', 'year': '2021', 'month': '8', 'day': '0'}), (False, None)),
+    (SimpleCalendarCallback(**{'act': 'NEXT-YEAR', 'year': '2022', 'month': '8', 'day': '1'}), (False, None)),
+    (SimpleCalendarCallback(**{'act': 'NEXT-MONTH', 'year': '2021', 'month': '8', 'day': '0'}), (False, None)),
+    (SimpleCalendarCallback(**{'act': 'CANCEL', 'year': '2021', 'month': '8', 'day': '0'}), (False, None)),
+    (SimpleCalendarCallback(**{'act': 'TODAY', 'year': '2021', 'month': '8', 'day': '1'}), (False, None)),
 ]
 
 

@@ -4,6 +4,7 @@ from unittest.mock import AsyncMock
 import pytest
 
 from aiogram_calendar import DialogCalendar
+from aiogram_calendar.schemas import DialogCalendarCallback
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 
@@ -17,20 +18,20 @@ def test_init():
 async def test_start_calendar():
     result = await DialogCalendar().start_calendar()
 
-    assert type(result) == InlineKeyboardMarkup
+    assert isinstance(result, InlineKeyboardMarkup)
     assert result.row_width == 5
 
-    assert 'inline_keyboard' in result
-    kb = result['inline_keyboard']
-    assert type(kb) == list
+    assert result.inline_keyboard
+    kb = result.inline_keyboard
+    assert isinstance(kb, list)
 
     for i in range(0, len(kb)):
-        assert type(kb[i]) == list
+        assert isinstance(kb[i], list)
 
-    assert type(kb[0][0]) == InlineKeyboardButton
+    assert isinstance(kb[0][1], InlineKeyboardButton)
     year = datetime.now().year
-    assert kb[0][0]['text'] == year - 2
-    assert type(kb[0][0]['callback_data']) == str
+    assert kb[0][0].text == str(year - 2)
+    assert isinstance(kb[0][0].callback_data, str)
 
 
 # checking if we can pass different years start period to check the range of buttons
@@ -47,31 +48,31 @@ async def test_start_calendar_params(year, expected1, expected2):
         result = await DialogCalendar().start_calendar(year=year)
     else:
         result = await DialogCalendar().start_calendar()
-    kb = result['inline_keyboard']
-    assert kb[0][0]['text'] == expected1
-    assert kb[0][4]['text'] == expected2
+    kb = result.inline_keyboard
+    assert kb[0][0].text == str(expected1)
+    assert kb[0][4].text == str(expected2)
 
 
 testset = [
-    ({'@': 'dialog_calendar', 'act': 'IGNORE', 'year': '2022', 'month': '8', 'day': '0'}, (False, None)),
+    (DialogCalendarCallback(**{'act': 'IGNORE', 'year': '2022', 'month': '8', 'day': '0'}), (False, None)),
     (
-        {'@': 'dialog_calendar', 'act': 'SET-DAY', 'year': '2022', 'month': '8', 'day': '1'},
+        DialogCalendarCallback(**{'act': 'SET-DAY', 'year': '2022', 'month': '8', 'day': '1'}),
         (True, datetime(2022, 8, 1))
     ),
     (
-        {'@': 'dialog_calendar', 'act': 'SET-DAY', 'year': '2021', 'month': '7', 'day': '16'},
+        DialogCalendarCallback(**{'act': 'SET-DAY', 'year': '2021', 'month': '7', 'day': '16'}),
         (True, datetime(2021, 7, 16))
     ),
     (
-        {'@': 'dialog_calendar', 'act': 'SET-DAY', 'year': '1900', 'month': '10', 'day': '8'},
+        DialogCalendarCallback(**{'act': 'SET-DAY', 'year': '1900', 'month': '10', 'day': '8'}),
         (True, datetime(1900, 10, 8))
     ),
-    ({'@': 'dialog_calendar', 'act': 'PREV-YEARS', 'year': '2022', 'month': '8', 'day': '1'}, (False, None)),
-    ({'@': 'dialog_calendar', 'act': 'NEXT-YEARS', 'year': '2021', 'month': '8', 'day': '0'}, (False, None)),
-    ({'@': 'dialog_calendar', 'act': 'SET-MONTH', 'year': '2022', 'month': '8', 'day': '1'}, (False, None)),
-    ({'@': 'dialog_calendar', 'act': 'SET-YEAR', 'year': '2021', 'month': '8', 'day': '0'}, (False, None)),
-    ({'@': 'dialog_calendar', 'act': 'START', 'year': '2021', 'month': '8', 'day': '0'}, (False, None)),
-    ({'@': 'dialog_calendar', 'act': 'CANCEL', 'year': '2021', 'month': '8', 'day': '0'}, (False, None)),
+    (DialogCalendarCallback(**{'act': 'PREV-YEARS', 'year': '2022', 'month': '8', 'day': '1'}), (False, None)),
+    (DialogCalendarCallback(**{'act': 'NEXT-YEARS', 'year': '2021', 'month': '8', 'day': '0'}), (False, None)),
+    (DialogCalendarCallback(**{'act': 'SET-MONTH', 'year': '2022', 'month': '8', 'day': '1'}), (False, None)),
+    (DialogCalendarCallback(**{'act': 'SET-YEAR', 'year': '2021', 'month': '8', 'day': '0'}), (False, None)),
+    (DialogCalendarCallback(**{'act': 'START', 'year': '2021', 'month': '8', 'day': '0'}), (False, None)),
+    (DialogCalendarCallback(**{'act': 'CANCEL', 'year': '2021', 'month': '8', 'day': '0'}), (False, None)),
 ]
 
 
