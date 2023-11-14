@@ -2,7 +2,7 @@ import logging
 import asyncio
 import sys
 
-from aiogram_calendar import SimpleCalendar, SimpleCallback, DialogCalendar, DialogCallback
+from aiogram_calendar import SimpleCalendar, SimpleCalendarCallback, DialogCalendar, DialogCalendarCallback
 from aiogram import Bot, Dispatcher, F
 from aiogram.enums import ParseMode
 from aiogram.filters import CommandStart
@@ -56,7 +56,7 @@ async def nav_cal_handler_date(message: Message):
 
 
 # simple calendar usage
-@dp.callback_query(SimpleCallback.filter())
+@dp.callback_query(SimpleCalendarCallback.filter())
 async def process_simple_calendar(callback_query: CallbackQuery, callback_data: CallbackData):
     selected, date = await SimpleCalendar().process_selection(callback_query, callback_data)
     if selected:
@@ -90,7 +90,7 @@ async def dialog_cal_handler_month(message: Message):
 
 
 # dialog calendar usage
-@dp.callback_query(DialogCallback.filter())
+@dp.callback_query(DialogCalendarCallback.filter())
 async def process_dialog_calendar(callback_query: CallbackQuery, callback_data: CallbackData):
     selected, date = await DialogCalendar().process_selection(callback_query, callback_data)
     if selected:

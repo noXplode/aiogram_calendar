@@ -1,17 +1,10 @@
 import calendar
-from typing import Optional
 from datetime import datetime, timedelta
 
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-from aiogram.filters.callback_data import CallbackData
 from aiogram.types import CallbackQuery
 
-
-class SimpleCallback(CallbackData, prefix="simple_calendar"):
-    act: str
-    year: Optional[int] = None
-    month: Optional[int] = None
-    day: Optional[int] = None
+from .schemas import SimpleCalendarCallback
 
 
 class SimpleCalendar:
@@ -29,14 +22,14 @@ class SimpleCalendar:
         """
         # building a calendar keyboard
         kb = []
-        ignore_callback = SimpleCallback(act="IGNORE").pack()  # placeholder for buttons with no answer
+        ignore_callback = SimpleCalendarCallback(act="IGNORE").pack()  # placeholder for buttons with no answer
 
         # inline_kb = InlineKeyboardMarkup(row_width=7)
         # First row - Year
         years_row = []
         years_row.append(InlineKeyboardButton(
             text="<<",
-            callback_data=SimpleCallback(act="PREV-YEAR", year=year, month=month, day=1).pack()
+            callback_data=SimpleCalendarCallback(act="PREV-YEAR", year=year, month=month, day=1).pack()
         ))
         years_row.append(InlineKeyboardButton(
             text=f'{calendar.month_name[month]} {str(year)}',
@@ -44,7 +37,7 @@ class SimpleCalendar:
         ))
         years_row.append(InlineKeyboardButton(
             text=">>",
-            callback_data=SimpleCallback(act="NEXT-YEAR", year=year, month=month, day=1).pack()
+            callback_data=SimpleCalendarCallback(act="NEXT-YEAR", year=year, month=month, day=1).pack()
         ))
         kb.append(years_row)
 
@@ -63,23 +56,24 @@ class SimpleCalendar:
                     days_row.append(InlineKeyboardButton(text=" ", callback_data=ignore_callback))
                     continue
                 days_row.append(InlineKeyboardButton(
-                    text=str(day), callback_data=SimpleCallback(act="DAY", year=year, month=month, day=day).pack()
+                    text=str(day),
+                    callback_data=SimpleCalendarCallback(act="DAY", year=year, month=month, day=day).pack()
                 ))
             kb.append(days_row)
 
         # Month nav Buttons & cancel button
         month_row = []
         month_row.append(InlineKeyboardButton(
-            text="<", callback_data=SimpleCallback(act="PREV-MONTH", year=year, month=month, day=day).pack()
+            text="<", callback_data=SimpleCalendarCallback(act="PREV-MONTH", year=year, month=month, day=day).pack()
         ))
         month_row.append(InlineKeyboardButton(
-            text="Cancel", callback_data=SimpleCallback(act="CANCEL", year=year, month=month, day=day).pack()
+            text="Cancel", callback_data=SimpleCalendarCallback(act="CANCEL", year=year, month=month, day=day).pack()
         ))
         month_row.append(InlineKeyboardButton(
-            text="Today", callback_data=SimpleCallback(act="TODAY", year=year, month=month, day=day).pack()
+            text="Today", callback_data=SimpleCalendarCallback(act="TODAY", year=year, month=month, day=day).pack()
         ))
         month_row.append(InlineKeyboardButton(
-            text=">", callback_data=SimpleCallback(act="NEXT-MONTH", year=year, month=month, day=day).pack()
+            text=">", callback_data=SimpleCalendarCallback(act="NEXT-MONTH", year=year, month=month, day=day).pack()
         ))
         kb.append(month_row)
         return InlineKeyboardMarkup(row_width=7, inline_keyboard=kb)
@@ -89,7 +83,7 @@ class SimpleCalendar:
             reply_markup=await self.start_calendar(int(with_date.year), int(with_date.month))
         )
 
-    async def process_selection(self, query: CallbackQuery, data: SimpleCallback) -> tuple:
+    async def process_selection(self, query: CallbackQuery, data: SimpleCalendarCallback) -> tuple:
         """
         Process the callback_query. This method generates a new calendar if forward or
         backward is pressed. This method should be called inside a CallbackQueryHandler.
