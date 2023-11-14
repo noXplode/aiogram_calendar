@@ -2,9 +2,8 @@ import logging
 import asyncio
 import sys
 
-# from aiogram.dispatcher.filters import Text
-from aiogram_calendar import SimpleCalendar, SimpleCallback   # simple_cal_callback, dialog_cal_callback, DialogCalendar
-from aiogram import Bot, Dispatcher, F    # , Router, types
+from aiogram_calendar import SimpleCalendar, SimpleCallback, DialogCalendar, DialogCallback
+from aiogram import Bot, Dispatcher, F
 from aiogram.enums import ParseMode
 from aiogram.filters import CommandStart
 from aiogram.filters.callback_data import CallbackData
@@ -14,7 +13,6 @@ from aiogram.utils.markdown import hbold
 from config import API_TOKEN
 
 # API_TOKEN = '' uncomment and insert your telegram bot API key here
-
 
 # All handlers should be attached to the Router (or Dispatcher)
 dp = Dispatcher()
@@ -52,7 +50,8 @@ async def nav_cal_handler(message: Message):
 @dp.message(F.text.lower() == 'navigation calendar w month')
 async def nav_cal_handler_date(message: Message):
     await message.answer(
-        "Calendar opened on feb 1999. Please select a date: ", reply_markup=await SimpleCalendar().start_calendar(1999, 2)
+        "Calendar opened on feb 1999. Please select a date: ",
+        reply_markup=await SimpleCalendar().start_calendar(1999, 2)
     )
 
 
@@ -60,6 +59,40 @@ async def nav_cal_handler_date(message: Message):
 @dp.callback_query(SimpleCallback.filter())
 async def process_simple_calendar(callback_query: CallbackQuery, callback_data: CallbackData):
     selected, date = await SimpleCalendar().process_selection(callback_query, callback_data)
+    if selected:
+        await callback_query.message.answer(
+            f'You selected {date.strftime("%d/%m/%Y")}',
+            reply_markup=start_kb
+        )
+
+
+@dp.message(F.text.lower() == 'dialog calendar')
+async def dialog_cal_handler(message: Message):
+    await message.answer("Please select a date: ", reply_markup=await DialogCalendar().start_calendar())
+
+
+# starting calendar with year 1989
+@dp.message(F.text.lower() == 'dialog calendar w year')
+async def dialog_cal_handler_year(message: Message):
+    await message.answer(
+        "Calendar opened years selection around 1989. Please select a date: ",
+        reply_markup=await DialogCalendar().start_calendar(1989)
+    )
+
+
+# starting calendar with year 1989 & month
+@dp.message(F.text.lower() == 'dialog calendar w month')
+async def dialog_cal_handler_month(message: Message):
+    await message.answer(
+        "Calendar opened on sep 1989. Please select a date: ",
+        reply_markup=await DialogCalendar().start_calendar(1989, 9)
+    )
+
+
+# dialog calendar usage
+@dp.callback_query(DialogCallback.filter())
+async def process_dialog_calendar(callback_query: CallbackQuery, callback_data: CallbackData):
+    selected, date = await DialogCalendar().process_selection(callback_query, callback_data)
     if selected:
         await callback_query.message.answer(
             f'You selected {date.strftime("%d/%m/%Y")}',
@@ -78,38 +111,3 @@ async def main() -> None:
 if __name__ == "__main__":
     logging.basicConfig(level=logging.INFO, stream=sys.stdout)
     asyncio.run(main())
-
-
-
-# @dp.message_handler(Text(equals=['Dialog Calendar'], ignore_case=True))
-# async def dialog_cal_handler(message: Message):
-#     await message.answer("Please select a date: ", reply_markup=await DialogCalendar().start_calendar())
-
-
-# # starting calendar with year 1989
-# @dp.message_handler(Text(equals=['Dialog Calendar w year'], ignore_case=True))
-# async def dialog_cal_handler_year(message: Message):
-#     await message.answer(
-#         "Calendar opened years selection around 1989. Please select a date: ",
-#         reply_markup=await DialogCalendar().start_calendar(1989)
-#     )
-
-
-# # starting calendar with year 1989 & month
-# @dp.message_handler(Text(equals=['Dialog Calendar w month'], ignore_case=True))
-# async def dialog_cal_handler_month(message: Message):
-#     await message.answer(
-#         "Calendar opened on sep 1989. Please select a date: ",
-#         reply_markup=await DialogCalendar().start_calendar(1989, 9)
-#     )
-
-
-# # dialog calendar usage
-# @dp.callback_query_handler(dialog_cal_callback.filter())
-# async def process_dialog_calendar(callback_query: CallbackQuery, callback_data: dict):
-#     selected, date = await DialogCalendar().process_selection(callback_query, callback_data)
-#     if selected:
-#         await callback_query.message.answer(
-#             f'You selected {date.strftime("%d/%m/%Y")}',
-#             reply_markup=start_kb
-#         )
