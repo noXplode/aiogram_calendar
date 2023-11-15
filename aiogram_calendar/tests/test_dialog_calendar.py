@@ -67,8 +67,8 @@ testset = [
         DialogCalendarCallback(**{'act': 'SET-DAY', 'year': '1900', 'month': '10', 'day': '8'}),
         (True, datetime(1900, 10, 8))
     ),
-    (DialogCalendarCallback(**{'act': 'PREV-YEARS', 'year': '2022', 'month': '8', 'day': '1'}), (False, None)),
-    (DialogCalendarCallback(**{'act': 'NEXT-YEARS', 'year': '2021', 'month': '8', 'day': '0'}), (False, None)),
+    (DialogCalendarCallback(**{'act': 'PREV-YEAR', 'year': '2022', 'month': '8', 'day': '1'}), (False, None)),
+    (DialogCalendarCallback(**{'act': 'NEXT-YEAR', 'year': '2021', 'month': '8', 'day': '0'}), (False, None)),
     (DialogCalendarCallback(**{'act': 'SET-MONTH', 'year': '2022', 'month': '8', 'day': '1'}), (False, None)),
     (DialogCalendarCallback(**{'act': 'SET-YEAR', 'year': '2021', 'month': '8', 'day': '0'}), (False, None)),
     (DialogCalendarCallback(**{'act': 'START', 'year': '2021', 'month': '8', 'day': '0'}), (False, None)),
