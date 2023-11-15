@@ -1,15 +1,27 @@
 import calendar
+from typing import Optional
 from datetime import datetime, timedelta
 
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.types import CallbackQuery
 
-from .schemas import SimpleCalendarCallback, SimpleCalAct
+from .schemas import SimpleCalendarCallback, SimpleCalAct, SimpleCalendarLabels
 
 
 class SimpleCalendar:
 
     ignore_callback = SimpleCalendarCallback(act=SimpleCalAct.ignore).pack()  # placeholder for no answer buttons
+
+    def __init__(self, labels: Optional[SimpleCalendarLabels] = None) -> None:
+        if not labels:
+            self._labels = SimpleCalendarLabels(
+                days_of_week=["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"],
+                months=["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+                cancel_caption='Cancel',
+                today_caption='Today'
+            )
+        else:
+            self._labels = labels
 
     async def start_calendar(
         self,
@@ -33,7 +45,7 @@ class SimpleCalendar:
             callback_data=SimpleCalendarCallback(act=SimpleCalAct.prev_y, year=year, month=month, day=1).pack()
         ))
         years_row.append(InlineKeyboardButton(
-            text=f'{calendar.month_name[month]} {str(year)}',
+            text=f'{self._labels.months[month-1]} {str(year)}',
             callback_data=self.ignore_callback
         ))
         years_row.append(InlineKeyboardButton(
@@ -44,7 +56,7 @@ class SimpleCalendar:
 
         # Second row - Week Days
         week_days_labels_row = []
-        for day in ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"]:
+        for day in self._labels.days_of_week:
             week_days_labels_row.append(InlineKeyboardButton(text=day, callback_data=self.ignore_callback))
         kb.append(week_days_labels_row)
 
@@ -69,11 +81,11 @@ class SimpleCalendar:
             callback_data=SimpleCalendarCallback(act=SimpleCalAct.prev_m, year=year, month=month, day=day).pack()
         ))
         month_row.append(InlineKeyboardButton(
-            text="Cancel",
+            text=self._labels.cancel_caption,
             callback_data=SimpleCalendarCallback(act=SimpleCalAct.cancel, year=year, month=month, day=day).pack()
         ))
         month_row.append(InlineKeyboardButton(
-            text="Today",
+            text=self._labels.today_caption,
             callback_data=SimpleCalendarCallback(act=SimpleCalAct.today, year=year, month=month, day=day).pack()
         ))
         month_row.append(InlineKeyboardButton(
