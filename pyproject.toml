@@ -1,0 +1,36 @@
+[build-system]
+requires      = ["setuptools>=61.0.0", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "aiogram_calendar"
+version = "0.2.1"
+description = "Simple Inline Calendar & Date Selection tool for Aiogram Telegram bots"
+readme = "README.md"
+authors = [{ name = "Andrii Nikolabai", email = "nikolabay.as@gmail.com" }]
+license = { file = "LICENSE" }
+classifiers = [
+    'Development Status :: 3 - Alpha',
+    'Intended Audience :: Developers',
+    'Topic :: Software Development :: Libraries :: Python Modules',
+    'License :: OSI Approved :: MIT License',
+    'Programming Language :: Python :: 3',
+    'Programming Language :: Python :: 3.6',
+    'Programming Language :: Python :: 3.7',
+    'Programming Language :: Python :: 3.8',
+    'Programming Language :: Python :: 3.9',
+    'Programming Language :: Python :: 3.10',
+    'Programming Language :: Python :: 3.11',
+    'Programming Language :: Python :: 3.12'
+]
+keywords = ['Aiogram', 'Telegram', 'Bots', 'Calendar']
+dependencies = [
+    'aiogram>=3'
+]
+requires-python = ">=3.8"
+
+[project.optional-dependencies]
+dev = ["pytest", "pytest-asyncio"]
+
+[project.urls]
+Homepage = "https://github.com/noXplode/aiogram_calendar"

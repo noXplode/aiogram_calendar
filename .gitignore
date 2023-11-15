@@ -9,5 +9,6 @@ __pycache__/
 config.py
 
 dist/
+aiogram_calendar.egg-info
 MANIFEST
 MANIFEST.in

@@ -18,13 +18,15 @@ from config import API_TOKEN
 dp = Dispatcher()
 
 
-# initialising keyboard
+# initialising keyboard, each button will be used to start a calendar with different initial settings
 kb = [
-    [   # 1 row of buttons
+    [   # 1 row of buttons for Navigation calendar
+        # where user can go to next/previous year/month
         KeyboardButton(text='Navigation Calendar'),
         KeyboardButton(text='Navigation Calendar w month'),
     ],
-    [   # 2 row of buttons
+    [   # 2 row of buttons for Dialog calendar
+        # where user selects year first, then month, then day
         KeyboardButton(text='Dialog Calendar'),
         KeyboardButton(text='Dialog Calendar w year'),
         KeyboardButton(text='Dialog Calendar w month'),
@@ -42,20 +44,22 @@ async def command_start_handler(message: Message) -> None:
     await message.reply(f"Hello, {hbold(message.from_user.full_name)}! Pick a calendar", reply_markup=start_kb)
 
 
+# default way of displaying a selector to user - date set for today
 @dp.message(F.text.lower() == 'navigation calendar')
 async def nav_cal_handler(message: Message):
     await message.answer("Please select a date: ", reply_markup=await SimpleCalendar().start_calendar())
 
 
+# can be launched at specific year and month
 @dp.message(F.text.lower() == 'navigation calendar w month')
 async def nav_cal_handler_date(message: Message):
     await message.answer(
         "Calendar opened on feb 1999. Please select a date: ",
-        reply_markup=await SimpleCalendar().start_calendar(1999, 2)
+        reply_markup=await SimpleCalendar().start_calendar(year=1999, month=2)
     )
 
 
-# simple calendar usage
+# simple calendar usage - filtering callbacks of calendar format
 @dp.callback_query(SimpleCalendarCallback.filter())
 async def process_simple_calendar(callback_query: CallbackQuery, callback_data: CallbackData):
     selected, date = await SimpleCalendar().process_selection(callback_query, callback_data)
@@ -80,12 +84,12 @@ async def dialog_cal_handler_year(message: Message):
     )
 
 
-# starting calendar with year 1989 & month
+# starting dialog calendar with year 1989 & month
 @dp.message(F.text.lower() == 'dialog calendar w month')
 async def dialog_cal_handler_month(message: Message):
     await message.answer(
         "Calendar opened on sep 1989. Please select a date: ",
-        reply_markup=await DialogCalendar().start_calendar(1989, 9)
+        reply_markup=await DialogCalendar().start_calendar(year=1989, month=9)
     )
 
 

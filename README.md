@@ -13,8 +13,9 @@ Install package
 
         pip install aiogram_calendar
 
-A full working example on how to use aiogram-calendar is provided in *bot_example.py*. 
-You create a calendar and add it to a message with a *reply_markup* parameter and then you can process it in a callbackqueyhandler method using the *process_selection* method.
+A full working example on how to use aiogram-calendar is provided in *bot_example.py*.
+
+In example keyboard with buttons is created. Each button triggers a calendar in a different way by adding it to a message with a *reply_markup*. Depending on what button of calendar user will press callback is precessed using the *process_selection* method.
 
 ## Gif demo:
 
