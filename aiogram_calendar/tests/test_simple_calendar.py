@@ -29,21 +29,21 @@ async def test_start_calendar():
 
     assert isinstance(kb[0][1], InlineKeyboardButton)
     now = datetime.now()
-    assert kb[0][1].text == f'{calendar.month_name[now.month][:3]} {str(now.year)}'
+    assert kb[0][1].text == f'{str(now.year)}'
     assert isinstance(kb[0][1].callback_data, str)
 
 
 # checking if we can pass different years & months as start periods
 testset = [
-    (2022, 2, 'Feb 2022'),
-    (2022, None, f'{calendar.month_name[datetime.now().month][:3]} 2022'),
-    (None, 5, f'May {datetime.now().year}'),
+    (2022, 2, '2022', 'Feb'),
+    (2022, None, '2022', f'{calendar.month_name[datetime.now().month][:3]}'),
+    (None, 5, f'{datetime.now().year}', 'May'),
 ]
 
 
 @pytest.mark.asyncio
-@pytest.mark.parametrize("year, month, expected", testset)
-async def test_start_calendar_params(year, month, expected):
+@pytest.mark.parametrize("year, month, expected, expected_2", testset)
+async def test_start_calendar_params(year, month, expected, expected_2):
     if year and month:
         result = await SimpleCalendar().start_calendar(year=year, month=month)
     elif year:
@@ -52,6 +52,7 @@ async def test_start_calendar_params(year, month, expected):
         result = await SimpleCalendar().start_calendar(month=month)
     kb = result.inline_keyboard
     assert kb[0][1].text == expected
+    assert kb[1][1].text == expected_2
 
 now = datetime.now()
 testset = [

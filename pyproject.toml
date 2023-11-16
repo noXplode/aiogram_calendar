@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "aiogram_calendar"
-version = "0.2.2"
+version = "0.3.0"
 description = "Simple Inline Calendar & Date Selection tool for Aiogram Telegram bots"
 readme = "README.md"
 authors = [{ name = "Andrii Nikolabai", email = "nikolabay.as@gmail.com" }]
