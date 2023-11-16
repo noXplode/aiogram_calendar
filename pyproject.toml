@@ -8,7 +8,7 @@ version = "0.3.0"
 description = "Simple Inline Calendar & Date Selection tool for Aiogram Telegram bots"
 readme = "README.md"
 authors = [{ name = "Andrii Nikolabai", email = "nikolabay.as@gmail.com" }]
-license = { file = "LICENSE" }
+license = { file = "LICENSE.txt" }
 classifiers = [
     'Development Status :: 3 - Alpha',
     'Intended Audience :: Developers',
