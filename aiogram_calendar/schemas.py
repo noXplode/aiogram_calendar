@@ -43,7 +43,8 @@ class DialogCalendarCallback(CalendarCallback, prefix="dialog_calendar"):
     act: DialogCalAct
 
 
-class SimpleCalendarLabels(BaseModel):
+class CalendarLabels(BaseModel):
+    "Schema to pass labels for calendar. Can be used to put in different languages"
     days_of_week: conlist(str, max_length=7, min_length=7)
     months: conlist(str, max_length=12, min_length=12)
     cancel_caption: str

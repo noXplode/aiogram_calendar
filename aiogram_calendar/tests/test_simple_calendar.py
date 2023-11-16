@@ -29,14 +29,14 @@ async def test_start_calendar():
 
     assert isinstance(kb[0][1], InlineKeyboardButton)
     now = datetime.now()
-    assert kb[0][1].text == f'{calendar.month_name[now.month]} {str(now.year)}'
+    assert kb[0][1].text == f'{calendar.month_name[now.month][:3]} {str(now.year)}'
     assert isinstance(kb[0][1].callback_data, str)
 
 
 # checking if we can pass different years & months as start periods
 testset = [
-    (2022, 2, 'February 2022'),
-    (2022, None, f'{calendar.month_name[datetime.now().month]} 2022'),
+    (2022, 2, 'Feb 2022'),
+    (2022, None, f'{calendar.month_name[datetime.now().month][:3]} 2022'),
     (None, 5, f'May {datetime.now().year}'),
 ]
 

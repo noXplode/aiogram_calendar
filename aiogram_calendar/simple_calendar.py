@@ -5,16 +5,17 @@ from datetime import datetime, timedelta
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.types import CallbackQuery
 
-from .schemas import SimpleCalendarCallback, SimpleCalAct, SimpleCalendarLabels
+from .schemas import SimpleCalendarCallback, SimpleCalAct, CalendarLabels
 
 
 class SimpleCalendar:
 
     ignore_callback = SimpleCalendarCallback(act=SimpleCalAct.ignore).pack()  # placeholder for no answer buttons
 
-    def __init__(self, labels: Optional[SimpleCalendarLabels] = None) -> None:
+    def __init__(self, labels: Optional[CalendarLabels] = None) -> None:
+        "Pass labels if you need to have alternative language of buttons"
         if not labels:
-            self._labels = SimpleCalendarLabels(
+            self._labels = CalendarLabels(
                 days_of_week=["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"],
                 months=["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
                 cancel_caption='Cancel',

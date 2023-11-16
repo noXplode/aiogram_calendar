@@ -1,15 +1,28 @@
 import calendar
+from typing import Optional
 from datetime import datetime
 
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.types import CallbackQuery
 
-from .schemas import DialogCalendarCallback, DialogCalAct
+from .schemas import DialogCalendarCallback, DialogCalAct, CalendarLabels
 
 
 class DialogCalendar:
-    months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+
     ignore_callback = DialogCalendarCallback(act=DialogCalAct.ignore).pack()    # placeholder for no answer buttons
+
+    def __init__(self, labels: Optional[CalendarLabels] = None) -> None:
+        "Pass labels if you need to have alternative language of buttons"
+        if not labels:
+            self._labels = CalendarLabels(
+                days_of_week=["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"],
+                months=["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+                cancel_caption='Cancel',
+                today_caption='Today'
+            )
+        else:
+            self._labels = labels
 
     async def _get_month_kb(self, year: int):
         "Creates a inline keyboard with months for specified year"
@@ -18,7 +31,7 @@ class DialogCalendar:
         years_row = []
         years_row.append(
             InlineKeyboardButton(
-                text="Cancel",
+                text=self._labels.cancel_caption,
                 callback_data=DialogCalendarCallback(act=DialogCalAct.cancel, year=year, month=1, day=1).pack()
             )
         )
@@ -30,19 +43,19 @@ class DialogCalendar:
         kb.append(years_row)
         # two rows with 6 months buttons
         month6_row = []
-        for month in self.months[0:6]:
+        for month in self._labels.months[0:6]:
             month6_row.append(InlineKeyboardButton(
                 text=month,
                 callback_data=DialogCalendarCallback(
-                    act=DialogCalAct.set_m, year=year, month=self.months.index(month) + 1, day=-1
+                    act=DialogCalAct.set_m, year=year, month=self._labels.months.index(month) + 1, day=-1
                 ).pack()
             ))
         month12_row = []
-        for month in self.months[6:12]:
+        for month in self._labels.months[6:12]:
             month12_row.append(InlineKeyboardButton(
                 text=month,
                 callback_data=DialogCalendarCallback(
-                    act=DialogCalAct.set_m, year=year, month=self.months.index(month) + 1, day=-1
+                    act=DialogCalAct.set_m, year=year, month=self._labels.months.index(month) + 1, day=-1
                 ).pack()
             ))
         kb.append(month6_row)
@@ -55,7 +68,7 @@ class DialogCalendar:
         nav_row = []
         nav_row.append(
             InlineKeyboardButton(
-                text="Cancel",
+                text=self._labels.cancel_caption,
                 callback_data=DialogCalendarCallback(act=DialogCalAct.cancel, year=year, month=1, day=1).pack()
             )
         )
@@ -64,13 +77,13 @@ class DialogCalendar:
             callback_data=DialogCalendarCallback(act=DialogCalAct.start, year=year, month=-1, day=-1).pack()
         ))
         nav_row.append(InlineKeyboardButton(
-            text=self.months[month - 1],
+            text=self._labels.months[month - 1],
             callback_data=DialogCalendarCallback(act=DialogCalAct.set_y, year=year, month=-1, day=-1).pack()
         ))
         kb.append(nav_row)
 
         week_days_labels_row = []
-        for day in ["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"]:
+        for day in self._labels.days_of_week:
             week_days_labels_row.append(InlineKeyboardButton(text=day, callback_data=self.ignore_callback))
         kb.append(week_days_labels_row)
 
@@ -112,7 +125,7 @@ class DialogCalendar:
             callback_data=DialogCalendarCallback(act=DialogCalAct.prev_y, year=year, month=-1, day=-1).pack()
         ))
         nav_row.append(InlineKeyboardButton(
-            text="Cancel",
+            text=self._labels.cancel_caption,
             callback_data=DialogCalendarCallback(act=DialogCalAct.cancel, year=year, month=1, day=1).pack()
         ))
         nav_row.append(InlineKeyboardButton(
