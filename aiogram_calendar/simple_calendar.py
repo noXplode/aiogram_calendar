@@ -1,5 +1,4 @@
 import calendar
-from typing import Optional
 from datetime import datetime, timedelta
 
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
@@ -12,17 +11,18 @@ class SimpleCalendar:
 
     ignore_callback = SimpleCalendarCallback(act=SimpleCalAct.ignore).pack()  # placeholder for no answer buttons
 
-    def __init__(self, labels: Optional[CalendarLabels] = None) -> None:
+    def __init__(self, locale: str = None, cancel_btn: str = None, today_btn: str = None) -> None:
         "Pass labels if you need to have alternative language of buttons"
-        if not labels:
-            self._labels = CalendarLabels(
-                days_of_week=["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"],
-                months=["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-                cancel_caption='Cancel',
-                today_caption='Today'
-            )
-        else:
-            self._labels = labels
+        self._labels = CalendarLabels()
+        if locale:
+            with calendar.different_locale(locale):
+                self._labels.days_of_week = list(calendar.day_abbr)
+                self._labels.months = calendar.month_abbr[1:]
+
+        if cancel_btn:
+            self._labels.cancel_caption = cancel_btn
+        if today_btn:
+            self._labels.today_caption = today_btn
 
     async def start_calendar(
         self,

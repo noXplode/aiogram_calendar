@@ -2,7 +2,8 @@ import logging
 import asyncio
 import sys
 
-from aiogram_calendar import SimpleCalendar, SimpleCalendarCallback, DialogCalendar, DialogCalendarCallback
+from aiogram_calendar import SimpleCalendar, SimpleCalendarCallback, DialogCalendar, DialogCalendarCallback, \
+    get_locale_from_user
 from aiogram import Bot, Dispatcher, F
 from aiogram.enums import ParseMode
 from aiogram.filters import CommandStart
@@ -47,7 +48,10 @@ async def command_start_handler(message: Message) -> None:
 # default way of displaying a selector to user - date set for today
 @dp.message(F.text.lower() == 'navigation calendar')
 async def nav_cal_handler(message: Message):
-    await message.answer("Please select a date: ", reply_markup=await SimpleCalendar().start_calendar())
+    await message.answer(
+        "Please select a date: ",
+        reply_markup=await SimpleCalendar(locale=await get_locale_from_user(message.from_user)).start_calendar()
+    )
 
 
 # can be launched at specific year and month
@@ -55,14 +59,14 @@ async def nav_cal_handler(message: Message):
 async def nav_cal_handler_date(message: Message):
     await message.answer(
         "Calendar opened on feb 1999. Please select a date: ",
-        reply_markup=await SimpleCalendar().start_calendar(year=1999, month=2)
+        reply_markup=await SimpleCalendar(locale=await get_locale_from_user(message.from_user)).start_calendar(year=1999, month=2)
     )
 
 
 # simple calendar usage - filtering callbacks of calendar format
 @dp.callback_query(SimpleCalendarCallback.filter())
 async def process_simple_calendar(callback_query: CallbackQuery, callback_data: CallbackData):
-    selected, date = await SimpleCalendar().process_selection(callback_query, callback_data)
+    selected, date = await SimpleCalendar(locale=await get_locale_from_user(callback_query.from_user)).process_selection(callback_query, callback_data)
     if selected:
         await callback_query.message.answer(
             f'You selected {date.strftime("%d/%m/%Y")}',
