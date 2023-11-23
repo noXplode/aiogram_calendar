@@ -80,7 +80,12 @@ async def process_simple_calendar(callback_query: CallbackQuery, callback_data: 
 
 @dp.message(F.text.lower() == 'dialog calendar')
 async def dialog_cal_handler(message: Message):
-    await message.answer("Please select a date: ", reply_markup=await DialogCalendar().start_calendar())
+    await message.answer(
+        "Please select a date: ",
+        reply_markup=await DialogCalendar(
+            locale=await get_user_locale(message.from_user)
+        ).start_calendar()
+    )
 
 
 # starting calendar with year 1989
@@ -88,7 +93,9 @@ async def dialog_cal_handler(message: Message):
 async def dialog_cal_handler_year(message: Message):
     await message.answer(
         "Calendar opened years selection around 1989. Please select a date: ",
-        reply_markup=await DialogCalendar().start_calendar(1989)
+        reply_markup=await DialogCalendar(
+            locale=await get_user_locale(message.from_user)
+        ).start_calendar(1989)
     )
 
 
@@ -97,14 +104,18 @@ async def dialog_cal_handler_year(message: Message):
 async def dialog_cal_handler_month(message: Message):
     await message.answer(
         "Calendar opened on sep 1989. Please select a date: ",
-        reply_markup=await DialogCalendar().start_calendar(year=1989, month=9)
+        reply_markup=await DialogCalendar(
+            locale=await get_user_locale(message.from_user)
+        ).start_calendar(year=1989, month=9)
     )
 
 
 # dialog calendar usage
 @dp.callback_query(DialogCalendarCallback.filter())
 async def process_dialog_calendar(callback_query: CallbackQuery, callback_data: CallbackData):
-    selected, date = await DialogCalendar().process_selection(callback_query, callback_data)
+    selected, date = await DialogCalendar(
+        locale=await get_user_locale(callback_query.from_user)
+    ).process_selection(callback_query, callback_data)
     if selected:
         await callback_query.message.answer(
             f'You selected {date.strftime("%d/%m/%Y")}',
