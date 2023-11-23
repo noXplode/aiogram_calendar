@@ -4,25 +4,13 @@ from datetime import datetime, timedelta
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.types import CallbackQuery
 
-from .schemas import SimpleCalendarCallback, SimpleCalAct, CalendarLabels
+from .schemas import SimpleCalendarCallback, SimpleCalAct
+from .common import GenericCalendar
 
 
-class SimpleCalendar:
+class SimpleCalendar(GenericCalendar):
 
     ignore_callback = SimpleCalendarCallback(act=SimpleCalAct.ignore).pack()  # placeholder for no answer buttons
-
-    def __init__(self, locale: str = None, cancel_btn: str = None, today_btn: str = None) -> None:
-        "Pass labels if you need to have alternative language of buttons"
-        self._labels = CalendarLabels()
-        if locale:
-            with calendar.different_locale(locale):
-                self._labels.days_of_week = list(calendar.day_abbr)
-                self._labels.months = calendar.month_abbr[1:]
-
-        if cancel_btn:
-            self._labels.cancel_caption = cancel_btn
-        if today_btn:
-            self._labels.today_caption = today_btn
 
     async def start_calendar(
         self,

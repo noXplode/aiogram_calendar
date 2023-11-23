@@ -1,28 +1,16 @@
 import calendar
-from typing import Optional
 from datetime import datetime
 
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.types import CallbackQuery
 
-from .schemas import DialogCalendarCallback, DialogCalAct, CalendarLabels
+from .schemas import DialogCalendarCallback, DialogCalAct
+from .common import GenericCalendar
 
 
-class DialogCalendar:
+class DialogCalendar(GenericCalendar):
 
     ignore_callback = DialogCalendarCallback(act=DialogCalAct.ignore).pack()    # placeholder for no answer buttons
-
-    def __init__(self, labels: Optional[CalendarLabels] = None) -> None:
-        "Pass labels if you need to have alternative language of buttons"
-        if not labels:
-            self._labels = CalendarLabels(
-                days_of_week=["Mo", "Tu", "We", "Th", "Fr", "Sa", "Su"],
-                months=["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
-                cancel_caption='Cancel',
-                today_caption='Today'
-            )
-        else:
-            self._labels = labels
 
     async def _get_month_kb(self, year: int):
         "Creates a inline keyboard with months for specified year"
