@@ -33,6 +33,17 @@ async def test_start_calendar():
     assert isinstance(kb[0][1].callback_data, str)
 
 
+@pytest.mark.asyncio
+async def test_start_calendar_locale():
+    result = await SimpleCalendar(locale='uk_UA').start_calendar()
+    assert result.inline_keyboard[2][0].text == 'Пн'
+    assert result.inline_keyboard[2][6].text == 'Нд'
+
+    result = await SimpleCalendar(locale='ru_Ru').start_calendar()
+    assert result.inline_keyboard[2][0].text == 'Пн'
+    assert result.inline_keyboard[2][6].text == 'Вс'
+
+
 # checking if we can pass different years & months as start periods
 testset = [
     (2022, 2, '2022', 'Feb'),
