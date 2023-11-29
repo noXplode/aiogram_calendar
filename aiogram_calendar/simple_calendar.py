@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.types import CallbackQuery
 
-from .schemas import SimpleCalendarCallback, SimpleCalAct, HIGHLIGHT_FORMAT
+from .schemas import SimpleCalendarCallback, SimpleCalAct, highlight, superscript
 from .common import GenericCalendar
 
 
@@ -29,19 +29,29 @@ class SimpleCalendar(GenericCalendar):
         now_month, now_year, now_day = today.month, today.year, today.day
 
         def highlight_month():
+            month_str = self._labels.months[month - 1]
             if now_month == month and now_year == year:
-                return HIGHLIGHT_FORMAT.format(self._labels.months[month - 1])
-            return self._labels.months[month - 1]
+                return highlight(month_str)
+            return month_str
 
         def highlight_weekday():
             if now_month == month and now_year == year and now_weekday == weekday:
-                return HIGHLIGHT_FORMAT.format(weekday)
+                return highlight(weekday)
             return weekday
+        
+        def format_day_string():
+            date_to_check = datetime(year, month, day)
+            if self.min_date and date_to_check < self.min_date:
+                return superscript(str(day))
+            elif self.max_date and date_to_check > self.max_date:
+                return superscript(str(day))
+            return str(day)
 
         def highlight_day():
-            if now_month == month and now_year == year and today.day == day:
-                return HIGHLIGHT_FORMAT.format(day)
-            return str(day)
+            day_string = format_day_string()
+            if now_month == month and now_year == year and now_day == day:
+                return highlight(day_string)
+            return day_string
 
         # building a calendar keyboard
         kb = []
@@ -54,7 +64,7 @@ class SimpleCalendar(GenericCalendar):
             callback_data=SimpleCalendarCallback(act=SimpleCalAct.prev_y, year=year, month=month, day=1).pack()
         ))
         years_row.append(InlineKeyboardButton(
-            text=str(year) if year != now_year else HIGHLIGHT_FORMAT.format(year),
+            text=str(year) if year != now_year else highlight(year),
             callback_data=self.ignore_callback
         ))
         years_row.append(InlineKeyboardButton(

@@ -54,3 +54,25 @@ class CalendarLabels(BaseModel):
 
 
 HIGHLIGHT_FORMAT = "[{}]"
+
+
+def highlight(text):
+    return HIGHLIGHT_FORMAT.format(text)
+
+
+def superscript(text):
+    normal = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+-=()"
+    super_s = "ᴬᴮᶜᴰᴱᶠᴳᴴᴵᴶᴷᴸᴹᴺᴼᴾQᴿˢᵀᵁⱽᵂˣʸᶻᵃᵇᶜᵈᵉᶠᵍʰᶦʲᵏˡᵐⁿᵒᵖ۹ʳˢᵗᵘᵛʷˣʸᶻ⁰¹²³⁴⁵⁶⁷⁸⁹⁺⁻⁼⁽⁾"
+    output = ''
+    for i in text:
+        output += (super_s[normal.index(i)] if i in normal else i)
+    return output
+
+
+def subscript(text):
+    normal = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+-=()"
+    sub_s = "ₐ₈CDₑբGₕᵢⱼₖₗₘₙₒₚQᵣₛₜᵤᵥwₓᵧZₐ♭꜀ᑯₑբ₉ₕᵢⱼₖₗₘₙₒₚ૧ᵣₛₜᵤᵥwₓᵧ₂₀₁₂₃₄₅₆₇₈₉₊₋₌₍₎"
+    output = ''
+    for i in text:
+        output += (sub_s[normal.index(i)] if i in normal else i)
+    return output
