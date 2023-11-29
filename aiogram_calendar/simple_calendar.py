@@ -4,7 +4,7 @@ from datetime import datetime, timedelta
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.types import CallbackQuery
 
-from .schemas import SimpleCalendarCallback, SimpleCalAct
+from .schemas import SimpleCalendarCallback, SimpleCalAct, HIGHLIGHT_FORMAT
 from .common import GenericCalendar
 
 
@@ -23,6 +23,26 @@ class SimpleCalendar(GenericCalendar):
         :param int month: Month to use in the calendar, if None the current month is used.
         :return: Returns InlineKeyboardMarkup object with the calendar.
         """
+
+        today = datetime.now()
+        now_weekday = self._labels.days_of_week[today.weekday()]
+        now_month, now_year, now_day = today.month, today.year, today.day
+
+        def highlight_month():
+            if now_month == month and now_year == year:
+                return HIGHLIGHT_FORMAT.format(self._labels.months[month - 1])
+            return self._labels.months[month - 1]
+
+        def highlight_weekday():
+            if now_month == month and now_year == year and now_weekday == weekday:
+                return HIGHLIGHT_FORMAT.format(weekday)
+            return weekday
+
+        def highlight_day():
+            if now_month == month and now_year == year and today.day == day:
+                return HIGHLIGHT_FORMAT.format(day)
+            return str(day)
+
         # building a calendar keyboard
         kb = []
 
@@ -34,7 +54,7 @@ class SimpleCalendar(GenericCalendar):
             callback_data=SimpleCalendarCallback(act=SimpleCalAct.prev_y, year=year, month=month, day=1).pack()
         ))
         years_row.append(InlineKeyboardButton(
-            text=f'{str(year)}',
+            text=str(year) if year != now_year else HIGHLIGHT_FORMAT.format(year),
             callback_data=self.ignore_callback
         ))
         years_row.append(InlineKeyboardButton(
@@ -50,7 +70,7 @@ class SimpleCalendar(GenericCalendar):
             callback_data=SimpleCalendarCallback(act=SimpleCalAct.prev_m, year=year, month=month, day=1).pack()
         ))
         month_row.append(InlineKeyboardButton(
-            text=f'{self._labels.months[month-1]}',
+            text=highlight_month(),
             callback_data=self.ignore_callback
         ))
         month_row.append(InlineKeyboardButton(
@@ -61,20 +81,21 @@ class SimpleCalendar(GenericCalendar):
 
         # Week Days
         week_days_labels_row = []
-        for day in self._labels.days_of_week:
-            week_days_labels_row.append(InlineKeyboardButton(text=day, callback_data=self.ignore_callback))
+        for weekday in self._labels.days_of_week:
+            week_days_labels_row.append(InlineKeyboardButton(text=highlight_weekday(), callback_data=self.ignore_callback))
         kb.append(week_days_labels_row)
 
         # Calendar rows - Days of month
         month_calendar = calendar.monthcalendar(year, month)
+
         for week in month_calendar:
             days_row = []
             for day in week:
-                if (day == 0):
+                if day == 0:
                     days_row.append(InlineKeyboardButton(text=" ", callback_data=self.ignore_callback))
                     continue
                 days_row.append(InlineKeyboardButton(
-                    text=str(day),
+                    text=highlight_day(),
                     callback_data=SimpleCalendarCallback(act=SimpleCalAct.day, year=year, month=month, day=day).pack()
                 ))
             kb.append(days_row)

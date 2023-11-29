@@ -51,3 +51,6 @@ class CalendarLabels(BaseModel):
     ]
     cancel_caption: str = Field(default='Cancel', description='Caprion for Cancel button')
     today_caption: str = Field(default='Today', description='Caprion for Cancel button')
+
+
+HIGHLIGHT_FORMAT = "[{}]"
