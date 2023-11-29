@@ -189,8 +189,9 @@ class DialogCalendar(GenericCalendar):
         if data.act == DialogCalAct.set_m:
             await query.message.edit_reply_markup(reply_markup=await self._get_days_kb(int(data.year), int(data.month)))
         if data.act == DialogCalAct.day:
-            await query.message.delete_reply_markup()   # removing inline keyboard
-            return_data = True, datetime(int(data.year), int(data.month), int(data.day))
+
+            return await self.process_day_select(data, query)
+
         if data.act == DialogCalAct.cancel:
             await query.message.delete_reply_markup()
         return return_data

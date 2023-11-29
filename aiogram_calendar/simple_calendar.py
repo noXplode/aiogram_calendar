@@ -149,8 +149,8 @@ class SimpleCalendar(GenericCalendar):
 
         # user picked a day button, return date
         if data.act == SimpleCalAct.day:
-            await query.message.delete_reply_markup()   # removing inline keyboard
-            return_data = True, datetime(int(data.year), int(data.month), int(data.day))
+            return await self.process_day_select(data, query)
+
         # user navigates to previous year, editing message with new calendar
         if data.act == SimpleCalAct.prev_y:
             prev_date = datetime(int(data.year) - 1, int(data.month), 1)
