@@ -1,6 +1,7 @@
 import logging
 import asyncio
 import sys
+from datetime import datetime
 
 from aiogram_calendar import SimpleCalendar, SimpleCalendarCallback, DialogCalendar, DialogCalendarCallback, \
     get_user_locale
@@ -54,23 +55,27 @@ async def nav_cal_handler(message: Message):
     )
 
 
-# can be launched at specific year and month
+# can be launched at specific year and month with allowed dates range
 @dp.message(F.text.lower() == 'navigation calendar w month')
 async def nav_cal_handler_date(message: Message):
+    calendar = SimpleCalendar(
+        locale=await get_user_locale(message.from_user), show_alerts=True
+    )
+    calendar.set_dates_range(datetime(2022, 1, 1), datetime(2025, 12, 31))
     await message.answer(
-        "Calendar opened on feb 1999. Please select a date: ",
-        reply_markup=await SimpleCalendar(
-            locale=await get_user_locale(message.from_user)
-        ).start_calendar(year=1999, month=2)
+        "Calendar opened on feb 2023. Please select a date: ",
+        reply_markup=await calendar.start_calendar(year=2023, month=2)
     )
 
 
 # simple calendar usage - filtering callbacks of calendar format
 @dp.callback_query(SimpleCalendarCallback.filter())
 async def process_simple_calendar(callback_query: CallbackQuery, callback_data: CallbackData):
-    selected, date = await SimpleCalendar(
-        locale=await get_user_locale(callback_query.from_user)
-    ).process_selection(callback_query, callback_data)
+    calendar = SimpleCalendar(
+        locale=await get_user_locale(callback_query.from_user), show_alerts=True
+    )
+    calendar.set_dates_range(datetime(2022, 1, 1), datetime(2025, 12, 31))
+    selected, date = await calendar.process_selection(callback_query, callback_data)
     if selected:
         await callback_query.message.answer(
             f'You selected {date.strftime("%d/%m/%Y")}',
