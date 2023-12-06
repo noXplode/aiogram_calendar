@@ -4,7 +4,7 @@ import locale
 from aiogram.types import User
 from datetime import datetime
 
-from .schemas import CalendarLabels, superscript
+from .schemas import CalendarLabels
 
 
 async def get_user_locale(from_user: User) -> str:
@@ -15,9 +15,21 @@ async def get_user_locale(from_user: User) -> str:
 
 class GenericCalendar:
 
-    def __init__(self, locale: str = None, cancel_btn: str = None, today_btn: str = None,
-                 show_alerts=False) -> None:
-        "Pass labels if you need to have alternative language of buttons"
+    def __init__(
+        self,
+        locale: str = None,
+        cancel_btn: str = None,
+        today_btn: str = None,
+        show_alerts: bool = False
+    ) -> None:
+        """Pass labels if you need to have alternative language of buttons
+
+        Parameters:
+        locale (str): Locale calendar must have captions in (in format uk_UA), if None - default English will be used
+        cancel_btn (str): label for button Cancel to cancel date input
+        today_btn (str): label for button Today to set calendar back to todays date
+        show_alerts (bool): defines how the date range error would shown (defaults to False)
+        """
         self._labels = CalendarLabels()
         if locale:
             # getting month names and days of week in specified locale
@@ -41,12 +53,16 @@ class GenericCalendar:
     async def process_day_select(self, data, query):
         date = datetime(int(data.year), int(data.month), int(data.day))
         if self.min_date and self.min_date > date:
-            await query.answer(f'The date have to be later {self.min_date.strftime("%d/%m/%Y")}',
-                               show_alert=self.show_alerts)
+            await query.answer(
+                f'The date have to be later {self.min_date.strftime("%d/%m/%Y")}',
+                show_alert=self.show_alerts
+            )
             return False, None
         elif self.max_date and self.max_date < date:
-            await query.answer(f'The date have to be before {self.max_date.strftime("%d/%m/%Y")}',
-                               show_alert=self.show_alerts)
+            await query.answer(
+                f'The date have to be before {self.max_date.strftime("%d/%m/%Y")}',
+                show_alert=self.show_alerts
+            )
             return False, None
         await query.message.delete_reply_markup()  # removing inline keyboard
         return True, date

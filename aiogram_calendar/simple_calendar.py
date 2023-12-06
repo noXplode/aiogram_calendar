@@ -38,7 +38,7 @@ class SimpleCalendar(GenericCalendar):
             if now_month == month and now_year == year and now_weekday == weekday:
                 return highlight(weekday)
             return weekday
-        
+
         def format_day_string():
             date_to_check = datetime(year, month, day)
             if self.min_date and date_to_check < self.min_date:
@@ -92,7 +92,9 @@ class SimpleCalendar(GenericCalendar):
         # Week Days
         week_days_labels_row = []
         for weekday in self._labels.days_of_week:
-            week_days_labels_row.append(InlineKeyboardButton(text=highlight_weekday(), callback_data=self.ignore_callback))
+            week_days_labels_row.append(
+                InlineKeyboardButton(text=highlight_weekday(), callback_data=self.ignore_callback)
+            )
         kb.append(week_days_labels_row)
 
         # Calendar rows - Days of month
