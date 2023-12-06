@@ -47,10 +47,12 @@ class GenericCalendar:
         self.show_alerts = show_alerts
 
     def set_dates_range(self, min_date: datetime, max_date: datetime):
+        """Sets range of minimum & maximum dates"""
         self.min_date = min_date
         self.max_date = max_date
 
     async def process_day_select(self, data, query):
+        """Checks selected date is in allowed range of dates"""
         date = datetime(int(data.year), int(data.month), int(data.day))
         if self.min_date and self.min_date > date:
             await query.answer(

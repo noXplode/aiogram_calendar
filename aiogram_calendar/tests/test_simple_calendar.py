@@ -29,7 +29,8 @@ async def test_start_calendar():
 
     assert isinstance(kb[0][1], InlineKeyboardButton)
     now = datetime.now()
-    assert kb[0][1].text == f'{str(now.year)}'
+    # also testing here that year will be highlighted with []
+    assert kb[0][1].text == f'[{str(now.year)}]'
     assert isinstance(kb[0][1].callback_data, str)
 
 
@@ -48,7 +49,8 @@ async def test_start_calendar_locale():
 testset = [
     (2022, 2, '2022', 'Feb'),
     (2022, None, '2022', f'{calendar.month_name[datetime.now().month][:3]}'),
-    (None, 5, f'{datetime.now().year}', 'May'),
+    # also testing here that year will be highlighted with []
+    (None, 5, f'[{datetime.now().year}]', 'May'),
 ]
 
 
