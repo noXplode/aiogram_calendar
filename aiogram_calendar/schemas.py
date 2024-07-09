@@ -49,8 +49,8 @@ class CalendarLabels(BaseModel):
     months: conlist(str, max_length=12, min_length=12) = [
         "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
     ]
-    cancel_caption: str = Field(default='Cancel', description='Caprion for Cancel button')
-    today_caption: str = Field(default='Today', description='Caprion for Cancel button')
+    cancel_caption: str = Field(default='Назад', description='Caprion for Cancel button')
+    today_caption: str = Field(default='Сегодня', description='Caprion for Cancel button')
 
 
 HIGHLIGHT_FORMAT = "[{}]"
