@@ -49,7 +49,9 @@ Install package
 
   
 
-pip install aiogram_calendar
+`pip install aiogram_calendar`
+
+`sudo dpkg-reconfigure locales -> select ru_RU (not ru_RU.UTF-8)`
 
   
 
