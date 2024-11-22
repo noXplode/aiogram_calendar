@@ -130,7 +130,7 @@ async def process_dialog_calendar(callback_query: CallbackQuery, callback_data: 
 
 async def main() -> None:
     # Initialize Bot instance with a default parse mode which will be passed to all API calls
-    bot = Bot(API_TOKEN, parse_mode=ParseMode.HTML)
+    bot = Bot(API_TOKEN) # work from aiogram v.3.7.0
 
     # And the run events dispatching
     await dp.start_polling(bot)
