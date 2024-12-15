@@ -4,6 +4,7 @@ env/
 .venv/
 .env
 .coverage
+.pypirc
 __pycache__/
 *.pyc
 config.py
