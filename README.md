@@ -55,7 +55,7 @@ pip install aiogram_calendar
 
   
 
-A full working example on how to use aiogram-calendar is provided in *`bot_example.py*`.
+A full working example on how to use aiogram-calendar is provided in `*bot_example.py*`.
 
   
 
