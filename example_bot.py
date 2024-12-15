@@ -11,6 +11,7 @@ from aiogram.filters import CommandStart
 from aiogram.filters.callback_data import CallbackData
 from aiogram.types import Message, ReplyKeyboardMarkup, KeyboardButton, CallbackQuery
 from aiogram.utils.markdown import hbold
+from aiogram.client.default import DefaultBotProperties
 
 from config import API_TOKEN
 
@@ -130,7 +131,7 @@ async def process_dialog_calendar(callback_query: CallbackQuery, callback_data: 
 
 async def main() -> None:
     # Initialize Bot instance with a default parse mode which will be passed to all API calls
-    bot = Bot(API_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML)) # work from aiogram v.3.7.0
+    bot = Bot(API_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))   # works from aiogram v.3.7.0
 
     # And the run events dispatching
     await dp.start_polling(bot)
