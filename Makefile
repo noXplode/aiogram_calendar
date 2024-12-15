@@ -11,3 +11,11 @@ dev:
 
 undev:
 	pip uninstall -y -r requirements_dev.txt
+
+.PHONY: build publish
+
+build:
+	python -m build
+
+publish:
+	python -m twine upload dist/*

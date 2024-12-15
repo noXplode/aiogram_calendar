@@ -12,3 +12,6 @@ dist/
 aiogram_calendar.egg-info
 MANIFEST
 MANIFEST.in
+
+build/
+*.egg-info/
