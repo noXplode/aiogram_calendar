@@ -5,3 +5,9 @@ example:
 # make tests m=aiogram_calendar/tests/test_dialog_calendar.py
 tests:
 	pytest $m --capture=tee-sys
+
+dev:
+	pip install -r requirements_dev.txt
+
+undev:
+	pip uninstall -y -r requirements_dev.txt
