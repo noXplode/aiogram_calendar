@@ -2,19 +2,23 @@ import logging
 import asyncio
 import sys
 from datetime import datetime
-
-from aiogram_calendar import SimpleCalendar, SimpleCalendarCallback, DialogCalendar, DialogCalendarCallback, \
+from aiogram_calendar import (
+    SimpleCalendar,
+    SimpleCalendarCallback, 
+    DialogCalendar, 
+    DialogCalendarCallback,
     get_user_locale
+)
 from aiogram import Bot, Dispatcher, F
 from aiogram.enums import ParseMode
 from aiogram.filters import CommandStart
 from aiogram.filters.callback_data import CallbackData
+from aiogram.client.default import DefaultBotProperties
 from aiogram.types import Message, ReplyKeyboardMarkup, KeyboardButton, CallbackQuery
 from aiogram.utils.markdown import hbold
 
-from config import API_TOKEN
-
-# API_TOKEN = '' uncomment and insert your telegram bot API key here
+# Bot token can be obtained via https://t.me/BotFather
+API_TOKEN = ''
 
 # All handlers should be attached to the Router (or Dispatcher)
 dp = Dispatcher()
@@ -130,7 +134,7 @@ async def process_dialog_calendar(callback_query: CallbackQuery, callback_data: 
 
 async def main() -> None:
     # Initialize Bot instance with a default parse mode which will be passed to all API calls
-    bot = Bot(API_TOKEN, parse_mode=ParseMode.HTML)
+    bot = Bot(API_TOKEN, default=DefaultBotProperties(parse_mode=ParseMode.HTML))
 
     # And the run events dispatching
     await dp.start_polling(bot)
