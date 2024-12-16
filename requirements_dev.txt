@@ -1,4 +1,4 @@
-aiogram~=3.1
+aiogram~=3.7
 aiogram_calendar
 flake8
 pytest

@@ -5,6 +5,7 @@ env/
 venv/
 .env
 .coverage
+.pypirc
 __pycache__/
 *.pyc
 config.py
@@ -13,3 +14,6 @@ dist/
 aiogram_calendar.egg-info
 MANIFEST
 MANIFEST.in
+
+build/
+*.egg-info/

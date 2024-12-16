@@ -16,6 +16,7 @@ from aiogram.filters.callback_data import CallbackData
 from aiogram.client.default import DefaultBotProperties
 from aiogram.types import Message, ReplyKeyboardMarkup, KeyboardButton, CallbackQuery
 from aiogram.utils.markdown import hbold
+from aiogram.client.default import DefaultBotProperties
 
 # Bot token can be obtained via https://t.me/BotFather
 API_TOKEN = ''

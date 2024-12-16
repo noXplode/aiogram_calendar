@@ -30,6 +30,7 @@ Dialog calendar - user selects year on first stage, month on next stage, day on 
   
 
 **From version 0.2 supports aiogram 3, use version 0.1.1 with aiogram 2.**
+**From version 0.6 supports aiogram 3.7, use version 0.5 with aiogram <3.7 **
 
   
 ## Main features
@@ -55,7 +56,7 @@ pip install aiogram_calendar
 
   
 
-A full working example on how to use aiogram-calendar is provided in *`bot_example.py*`.
+A full working example on how to use aiogram-calendar is provided in `*bot_example.py*`.
 
   
 

@@ -1,2 +1,2 @@
-aiogram>=3
+aiogram~=3.7
 aiogram_calendar
