@@ -131,51 +131,59 @@ class SimpleCalendar(GenericCalendar):
             reply_markup=await self.start_calendar(int(with_date.year), int(with_date.month))
         )
 
-    async def process_selection(self, query: CallbackQuery, data: SimpleCalendarCallback) -> tuple:
+        async def process_selection(self, query: CallbackQuery) -> tuple:
         """
         Process the callback_query. This method generates a new calendar if forward or
         backward is pressed. This method should be called inside a CallbackQueryHandler.
         :param query: callback_query, as provided by the CallbackQueryHandler
-        :param data: callback_data, dictionary, set by calendar_callback
         :return: Returns a tuple (Boolean,datetime), indicating if a date is selected
                     and returning the date if so.
         """
         return_data = (False, None)
 
-        # processing empty buttons, answering with no action
-        if data.act == SimpleCalAct.ignore:
+        # Извлечение callback_data из запроса (формат: 'action:year:month:day')
+        print(query.data)
+        data = query.data.split(":")
+        action = data[1]
+        year = int(data[2])
+        month = int(data[3])
+        day = int(data[4]) if len(data) > 3 else None
+
+        temp_date = datetime(year, month, 1)
+
+        # Обработка разных действий
+        if action == SimpleCalAct.ignore:
             await query.answer(cache_time=60)
             return return_data
 
-        temp_date = datetime(int(data.year), int(data.month), 1)
+        if action == SimpleCalAct.day:
+            return await self.process_day_select(query, datetime(year, month, day))
 
-        # user picked a day button, return date
-        if data.act == SimpleCalAct.day:
-            return await self.process_day_select(data, query)
-
-        # user navigates to previous year, editing message with new calendar
-        if data.act == SimpleCalAct.prev_y:
-            prev_date = datetime(int(data.year) - 1, int(data.month), 1)
+        if action == SimpleCalAct.prev_y:
+            prev_date = datetime(year - 1, month, 1)
             await self._update_calendar(query, prev_date)
-        # user navigates to next year, editing message with new calendar
-        if data.act == SimpleCalAct.next_y:
-            next_date = datetime(int(data.year) + 1, int(data.month), 1)
+
+        elif action == SimpleCalAct.next_y:
+            next_date = datetime(year + 1, month, 1)
             await self._update_calendar(query, next_date)
-        # user navigates to previous month, editing message with new calendar
-        if data.act == SimpleCalAct.prev_m:
+
+        elif action == SimpleCalAct.prev_m:
             prev_date = temp_date - timedelta(days=1)
             await self._update_calendar(query, prev_date)
-        # user navigates to next month, editing message with new calendar
-        if data.act == SimpleCalAct.next_m:
+
+        elif action == SimpleCalAct.next_m:
             next_date = temp_date + timedelta(days=31)
             await self._update_calendar(query, next_date)
-        if data.act == SimpleCalAct.today:
-            next_date = datetime.now()
-            if next_date.year != int(data.year) or next_date.month != int(data.month):
-                await self._update_calendar(query, datetime.now())
+
+        elif action == SimpleCalAct.today:
+            today = datetime.now()
+            if today.year != year or today.month != month:
+                await self._update_calendar(query, today)
             else:
                 await query.answer(cache_time=60)
-        if data.act == SimpleCalAct.cancel:
+
+        elif action == SimpleCalAct.cancel:
             await query.message.delete_reply_markup()
-        # at some point user clicks DAY button, returning date
+
+        # Возвращаем результат
         return return_data
