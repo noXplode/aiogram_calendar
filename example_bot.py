@@ -82,6 +82,9 @@ async def process_simple_calendar(callback_query: CallbackQuery, callback_data: 
             f'You selected {date.strftime("%d/%m/%Y")}',
             reply_markup=start_kb
         )
+    else:
+        if date == 'cancel':
+            await callback_query.message.answer("Cancelled")
 
 
 @dp.message(F.text.lower() == 'dialog calendar')
@@ -127,6 +130,9 @@ async def process_dialog_calendar(callback_query: CallbackQuery, callback_data: 
             f'You selected {date.strftime("%d/%m/%Y")}',
             reply_markup=start_kb
         )
+    else:
+        if date == 'cancel':
+            await callback_query.message.answer("Cancelled")
 
 
 async def main() -> None:

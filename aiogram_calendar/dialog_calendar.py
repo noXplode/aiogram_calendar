@@ -194,4 +194,5 @@ class DialogCalendar(GenericCalendar):
 
         if data.act == DialogCalAct.cancel:
             await query.message.delete_reply_markup()
+            return False, 'cancel'
         return return_data

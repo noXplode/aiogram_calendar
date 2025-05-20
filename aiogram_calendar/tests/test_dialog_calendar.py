@@ -72,7 +72,7 @@ testset = [
     (DialogCalendarCallback(**{'act': 'SET-MONTH', 'year': '2022', 'month': '8', 'day': '1'}), (False, None)),
     (DialogCalendarCallback(**{'act': 'SET-YEAR', 'year': '2021', 'month': '8', 'day': '0'}), (False, None)),
     (DialogCalendarCallback(**{'act': 'START', 'year': '2021', 'month': '8', 'day': '0'}), (False, None)),
-    (DialogCalendarCallback(**{'act': 'CANCEL', 'year': '2021', 'month': '8', 'day': '0'}), (False, None)),
+    (DialogCalendarCallback(**{'act': 'CANCEL', 'year': '2021', 'month': '8', 'day': '0'}), (False, 'cancel')),
 ]
 
 

@@ -177,5 +177,6 @@ class SimpleCalendar(GenericCalendar):
                 await query.answer(cache_time=60)
         if data.act == SimpleCalAct.cancel:
             await query.message.delete_reply_markup()
+            return False, 'cancel'
         # at some point user clicks DAY button, returning date
         return return_data

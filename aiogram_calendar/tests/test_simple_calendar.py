@@ -83,7 +83,7 @@ testset = [
     (SimpleCalendarCallback(**{'act': 'PREV-MONTH', 'year': '2021', 'month': '8', 'day': '0'}), (False, None)),
     (SimpleCalendarCallback(**{'act': 'NEXT-YEAR', 'year': '2022', 'month': '8', 'day': '1'}), (False, None)),
     (SimpleCalendarCallback(**{'act': 'NEXT-MONTH', 'year': '2021', 'month': '8', 'day': '0'}), (False, None)),
-    (SimpleCalendarCallback(**{'act': 'CANCEL', 'year': '2021', 'month': '8', 'day': '0'}), (False, None)),
+    (SimpleCalendarCallback(**{'act': 'CANCEL', 'year': '2021', 'month': '8', 'day': '0'}), (False, 'cancel')),
     (SimpleCalendarCallback(**{'act': 'TODAY', 'year': '2021', 'month': '8', 'day': '1'}), (False, None)),
 ]
 
