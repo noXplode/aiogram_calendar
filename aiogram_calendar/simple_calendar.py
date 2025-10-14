@@ -15,7 +15,8 @@ class SimpleCalendar(GenericCalendar):
     async def start_calendar(
         self,
         year: int = datetime.now().year,
-        month: int = datetime.now().month
+        month: int = datetime.now().month,
+        custom_activity_button: InlineKeyboardButton | None = None
     ) -> InlineKeyboardMarkup:
         """
         Creates an inline keyboard with the provided year and month
@@ -118,7 +119,10 @@ class SimpleCalendar(GenericCalendar):
             text=self._labels.cancel_caption,
             callback_data=SimpleCalendarCallback(act=SimpleCalAct.cancel, year=year, month=month, day=day).pack()
         ))
-        cancel_row.append(InlineKeyboardButton(text=" ", callback_data=self.ignore_callback))
+        if custom_activity_button:
+            cancel_row.append(custom_activity_button)
+        else:
+            cancel_row.append(InlineKeyboardButton(text=" ", callback_data=self.ignore_callback))
         cancel_row.append(InlineKeyboardButton(
             text=self._labels.today_caption,
             callback_data=SimpleCalendarCallback(act=SimpleCalAct.today, year=year, month=month, day=day).pack()
